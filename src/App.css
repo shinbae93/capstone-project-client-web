@@ -1,0 +1,17 @@
+.App {
+  overflow-x: hidden;
+  width: 100vw;
+}
+
+.ant-pagination-item-active {
+  border: 1px #ffb606 solid !important;
+  background-color: #ffb606 !important;
+}
+
+.ant-pagination-item-active a {
+  color: white !important;
+}
+
+.sidebar {
+  border: solid 1px #e5e5e5;
+}
