@@ -2,7 +2,7 @@ import { RightOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
 import { Link } from 'react-router-dom'
 
-const CourseBreadcrumb = () => {
+const CourseDetailBreadcrumb = () => {
   return (
     <div className="bg-breadcrumb">
       <div className="px-28 py-4">
@@ -25,6 +25,26 @@ const CourseBreadcrumb = () => {
                 </Link>
               ),
             },
+            {
+              title: (
+                <Link
+                  to="/courses"
+                  className="text-breadcrumb hover:bg-transparent font-normal text-sm"
+                >
+                  Math
+                </Link>
+              ),
+            },
+            {
+              title: (
+                <Link
+                  to="/courses"
+                  className="text-breadcrumb hover:bg-transparent font-normal text-sm"
+                >
+                  Math 9
+                </Link>
+              ),
+            },
           ]}
           separator={
             <RightOutlined className="align-middle text-[10px] text-black font-semibold" />
@@ -35,4 +55,4 @@ const CourseBreadcrumb = () => {
   )
 }
 
-export default CourseBreadcrumb
+export default CourseDetailBreadcrumb

@@ -8,7 +8,6 @@ import {
   TwitterSquareFilled,
 } from '@ant-design/icons'
 import { Divider } from 'antd'
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 const Footer = () => {

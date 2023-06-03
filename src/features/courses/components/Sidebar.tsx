@@ -117,7 +117,7 @@ const CourseSidebar = () => {
           </div>
           {/** Filter button */}
           <div className="text-center py-5">
-            <Button className="bg-primary h-9 font-semibold active:border-none active:text-white hover:border-none hover:text-white">
+            <Button className="bg-primary h-9 font-semibold hover:border-primary hover:text-white">
               Filter Results
             </Button>
           </div>

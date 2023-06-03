@@ -1,10 +1,11 @@
 import 'antd/dist/reset.css'
-import './App.css'
-import Header from './layouts/Header'
 import { Route, Routes } from 'react-router-dom'
-import Home from './pages/Home'
-import Courses from './pages/Courses'
+import './App.css'
 import Footer from './layouts/Footer'
+import Header from './layouts/Header'
+import Courses from './pages/Courses'
+import CoursesDetail from './pages/CoursesDetail'
+import Home from './pages/Home'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/detail" element={<CoursesDetail />} />
       </Routes>
       <Footer />
     </div>

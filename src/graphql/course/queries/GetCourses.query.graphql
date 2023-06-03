@@ -1,0 +1,28 @@
+query courses {
+  courses(queryParams: { pagination: { limit: 10, page: 1 } }) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      name
+      thumbnail
+      description
+      objectives
+      fee
+      isPublished
+      status
+      startDate
+      endDate
+      userId
+      gradeId
+      subjectId
+      createdAt
+      updatedAt
+    }
+  }
+}

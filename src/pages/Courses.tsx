@@ -1,8 +1,13 @@
 import CourseList from '../features/courses/components/CourseList'
 import CourseSidebar from '../features/courses/components/Sidebar'
 import CourseBreadcrumb from '../features/courses/components/Breadcrumb'
+import { useCoursesQuery } from '../graphql/generated/graphql'
 
 const Courses = () => {
+  const { data, error } = useCoursesQuery()
+  console.log('🚀 ~ file: Courses.tsx:8 ~ Courses ~ error:', error)
+  console.log('🚀 ~ file: Courses.tsx:8 ~ Courses ~ data:', data)
+
   return (
     <div>
       <CourseBreadcrumb />
