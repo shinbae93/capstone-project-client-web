@@ -11,6 +11,6 @@ module.exports = {
   plugins: ['react-refresh'],
   rules: {
     'react-refresh/only-export-components': 'warn',
-    'react-refresh/react-in-jsx-scope': 'off',
+    '@typescript-eslint/no-empty-function': 'off',
   },
 }

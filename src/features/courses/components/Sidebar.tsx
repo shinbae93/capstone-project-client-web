@@ -1,6 +1,13 @@
 import { Button, Checkbox, Col, Divider, Row } from 'antd'
+import { Grade, Subject } from '../../../graphql/generated/graphql'
+import { FC } from 'react'
 
-const CourseSidebar = () => {
+interface CourseSidebarProps {
+  grades: Grade[] | undefined
+  subjects: Subject[] | undefined
+}
+
+const CourseSidebar: FC<CourseSidebarProps> = ({ grades, subjects }) => {
   return (
     <div className="flex-1">
       <div className="sidebar px-5 py-2">
@@ -12,106 +19,29 @@ const CourseSidebar = () => {
             <div></div>
             <Checkbox.Group className="w-full">
               <Col>
-                <Row className="py-1">
-                  <Checkbox value="A">
-                    <p>Arts & Crafts</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="B">
-                    <p>Photography</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="C">
-                    <p>Web development</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="D">
-                    <p>Sales</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Marketing</p>
-                  </Checkbox>
-                </Row>
+                {subjects?.map((subject) => (
+                  <Row className="py-1" key={subject.id}>
+                    <Checkbox value={subject.id}>
+                      <p>{subject.name}</p>
+                    </Checkbox>
+                  </Row>
+                ))}
               </Col>
             </Checkbox.Group>
           </div>
-          {/** Level */}
+          {/** Grade */}
           <div className="pt-5">
-            <p>Level</p>
+            <p>Grade</p>
             <Divider className="my-4" />
-            <div></div>
             <Checkbox.Group className="w-full">
               <Col>
-                <Row className="py-1">
-                  <Checkbox value="A">
-                    <p>Kindergarten</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="B">
-                    <p>Grade 1</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="C">
-                    <p>Grade 2</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="D">
-                    <p>Grade 3</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 4</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 5</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 6</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 7</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 8</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 9</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 10</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 11</p>
-                  </Checkbox>
-                </Row>
-                <Row className="py-1">
-                  <Checkbox value="E">
-                    <p>Grade 12</p>
-                  </Checkbox>
-                </Row>
+                {grades?.map((grade) => (
+                  <Row className="py-1" key={grade.id}>
+                    <Checkbox value={grade.id}>
+                      <p>{grade.name}</p>
+                    </Checkbox>
+                  </Row>
+                ))}
               </Col>
             </Checkbox.Group>
           </div>

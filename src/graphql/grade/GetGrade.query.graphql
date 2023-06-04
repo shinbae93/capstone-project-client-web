@@ -1,0 +1,6 @@
+query grades {
+  grades {
+    id
+    name
+  }
+}

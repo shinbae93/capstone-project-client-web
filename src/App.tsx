@@ -1,22 +1,28 @@
 import 'antd/dist/reset.css'
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import Footer from './layouts/Footer'
-import Header from './layouts/Header'
+import Layout from './layouts/Layout'
 import Courses from './pages/Courses'
 import CoursesDetail from './pages/CoursesDetail'
 import Home from './pages/Home'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import PrivateRoute from './components/PrivateRoute'
 
 function App() {
   return (
     <div className="App">
-      <Header />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/courses" element={<Courses />} />
-        <Route path="/courses/detail" element={<CoursesDetail />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/detail" element={<CoursesDetail />} />
+          </Route>
+        </Route>
       </Routes>
-      <Footer />
     </div>
   )
 }

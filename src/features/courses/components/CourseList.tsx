@@ -1,26 +1,28 @@
 import { CalendarOutlined, AuditOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, List, Select } from 'antd'
+import { Course, CoursesPagination } from '../../../graphql/generated/graphql.ts'
+import { FC } from 'react'
+import { PaginationMeta } from '../../../graphql/generated/graphql.ts'
+import { DEFAULT_IMG } from '../../../common/constants.ts'
 
-const data = Array.from({ length: 33 }).map((_, i) => ({
-  href: 'https://ant.design',
-  title: `Read More Create an LMS Website with LearnPress ${i}`,
-  avatar: `https://xsgames.co/randomusers/avatar.php?g=pixel&key=${i}`,
-  description:
-    'A series of Videos from ThimPress, give you a detailed tutorial to create an LMS Website with LearnPress – LMS & Education WordPress Plugin....',
-  content:
-    'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-}))
+interface CourseItemProps {
+  course: Course | undefined
+}
 
-const CourseItem = () => {
+interface CourseListProps {
+  data: CoursesPagination | undefined
+}
+
+const CourseItem: FC<CourseItemProps> = ({ course }) => {
   return (
     <div className="overflow-hidden grid grid-cols-course-item gap-7 items-center py-5">
       {/** Thumbnail */}
       <div>
         <a href="/">
           <img
-            src="https://eduma.thimpress.com/wp-content/uploads/2022/12/create-an-lms-website-with-learnpress-3-1-400x300.jpg"
-            alt="Create an LMS Website with LearnPress"
-            title="create-an-lms-website-with-learnpress-3"
+            src={course?.thumbnail || DEFAULT_IMG}
+            alt="Course thumbnail"
+            title={course?.name}
             width="250"
             height="200"
             className="rounded-md"
@@ -31,14 +33,11 @@ const CourseItem = () => {
       <div>
         {/** Title */}
         <div>
-          <p className="font-semibold text-xl">Read More Create an LMS Website with LearnPress</p>
+          <p className="font-semibold text-xl">{course?.name}</p>
         </div>
         {/** Description */}
         <div className="py-4">
-          <p>
-            A series of Videos from ThimPress, give you a detailed tutorial to create an LMS Website
-            with LearnPress – LMS & Education WordPress Plugin....
-          </p>
+          <p>{course?.description || 'No description.'}</p>
         </div>
         {/** Meta information */}
         <div className="flex flex-row">
@@ -82,7 +81,9 @@ const CourseItem = () => {
   )
 }
 
-const CourseList = () => {
+const CourseList: FC<CourseListProps> = ({ data }) => {
+  const { totalItems, itemCount, itemsPerPage } = data?.meta as PaginationMeta
+
   return (
     <div className="flex-[3]">
       {/** Course list section */}
@@ -90,7 +91,9 @@ const CourseList = () => {
         {/** Top bar of course list */}
         <div className="flex justify-between w-full">
           {/** Pagination results */}
-          <p className="text-footer text-sm">Showing 1-10 of 33 results</p>
+          <p className="text-footer text-sm">
+            Showing 1-{itemCount} of {totalItems} results
+          </p>
           {/** Sort menu */}
           <Select
             defaultValue="newly published"
@@ -120,16 +123,16 @@ const CourseList = () => {
               onChange: (page) => {
                 console.log(page)
               },
-              pageSize: 10,
+              pageSize: itemsPerPage,
               align: 'center',
               style: {
                 paddingTop: '24px',
               },
             }}
-            dataSource={data}
+            dataSource={data?.items}
             renderItem={(item) => (
-              <List.Item key={item.title}>
-                <CourseItem />
+              <List.Item key={item.id}>
+                <CourseItem course={item} />
               </List.Item>
             )}
           />
