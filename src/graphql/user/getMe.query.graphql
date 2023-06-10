@@ -1,0 +1,17 @@
+query getMe {
+  getMe {
+    id
+    email
+    fullName
+    avatar
+    phoneNumber
+    gender
+    birthday
+    roleId
+    role {
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}

@@ -7,7 +7,7 @@ import CoursesDetail from './pages/CoursesDetail'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import PrivateRoute from './components/PrivateRoute'
+import PrivateRoute from './shared/routers/PrivateRoute'
 
 function App() {
   return (
@@ -19,7 +19,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route path="/" element={<Home />} />
             <Route path="/courses" element={<Courses />} />
-            <Route path="/courses/detail" element={<CoursesDetail />} />
+            <Route path="/courses/:id" element={<CoursesDetail />} />
           </Route>
         </Route>
       </Routes>

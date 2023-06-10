@@ -11,6 +11,7 @@ export default {
       },
       backgroundColor: {
         breadcrumb: '#F3F3F3',
+        info: '#333333',
       },
       textColor: {
         normal: '#584C47',
@@ -25,6 +26,7 @@ export default {
       },
       borderColor: {
         thin: '#eee',
+        info: '#cccccc',
       },
     },
   },

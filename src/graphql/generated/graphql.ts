@@ -38,7 +38,7 @@ export enum ClassMethod {
 
 export type Course = {
   __typename?: 'Course';
-  classes: Array<Class>;
+  classes?: Maybe<Array<Class>>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
   endDate: Scalars['Date']['output'];
@@ -59,10 +59,17 @@ export type Course = {
   userId: Scalars['String']['output'];
 };
 
+export type CourseFilterParams = {
+  gradeIds?: InputMaybe<Array<Scalars['String']['input']>>;
+  q?: InputMaybe<Scalars['String']['input']>;
+  statuses?: InputMaybe<Array<CourseStatus>>;
+  subjectIds?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
 export type CourseQueryParams = {
+  filters?: InputMaybe<CourseFilterParams>;
   pagination?: InputMaybe<PaginateOptions>;
   sorting?: InputMaybe<Array<SortField>>;
-  statuses?: InputMaybe<Array<CourseStatus>>;
 };
 
 export enum CourseStatus {
@@ -104,7 +111,6 @@ export type CreateDocumentInput = {
 
 export type CreateEnrolmentInput = {
   classId: Scalars['ID']['input'];
-  courseId: Scalars['ID']['input'];
 };
 
 export type CreateGradeInput = {
@@ -167,16 +173,9 @@ export type Enrolment = {
   courseId: Scalars['ID']['output'];
   id: Scalars['ID']['output'];
   isFinished: Scalars['Boolean']['output'];
-  status: EnrolmentStatus;
   user: User;
   userId: Scalars['ID']['output'];
 };
-
-export enum EnrolmentStatus {
-  Finished = 'FINISHED',
-  InProgress = 'IN_PROGRESS',
-  UpComing = 'UP_COMING'
-}
 
 export type Grade = {
   __typename?: 'Grade';
@@ -221,6 +220,7 @@ export type LoginInput = {
 export type LoginOutput = {
   __typename?: 'LoginOutput';
   accessToken: Scalars['String']['output'];
+  refreshToken: Scalars['String']['output'];
 };
 
 export type Mutation = {
@@ -241,6 +241,7 @@ export type Mutation = {
   deleteUser: User;
   login: LoginOutput;
   logout: Scalars['Boolean']['output'];
+  refreshToken: Scalars['String']['output'];
   register: User;
   removeClass: Scalars['Boolean']['output'];
   removeCourse: Course;
@@ -348,8 +349,8 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationLogoutArgs = {
-  refreshToken: Scalars['String']['input'];
+export type MutationRefreshTokenArgs = {
+  token: Scalars['String']['input'];
 };
 
 
@@ -548,6 +549,11 @@ export type Query = {
 
 export type QueryClassArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+export type QueryClassesArgs = {
+  courseId?: InputMaybe<Scalars['ID']['input']>;
 };
 
 
@@ -846,17 +852,37 @@ export type User = {
 };
 
 export type LoginMutationVariables = Exact<{
-  email: Scalars['String']['input'];
-  password: Scalars['String']['input'];
+  input: LoginInput;
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginOutput', accessToken: string } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'LoginOutput', accessToken: string, refreshToken: string } };
 
-export type CoursesQueryVariables = Exact<{ [key: string]: never; }>;
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
+
+export type RefreshTokenMutationVariables = Exact<{
+  token: Scalars['String']['input'];
+}>;
+
+
+export type RefreshTokenMutation = { __typename?: 'Mutation', refreshToken: string };
+
+export type CoursesQueryVariables = Exact<{
+  queryParams: CourseQueryParams;
+}>;
 
 
 export type CoursesQuery = { __typename?: 'Query', courses: { __typename?: 'CoursesPagination', meta: { __typename?: 'PaginationMeta', itemCount: number, totalItems: number, itemsPerPage: number, totalPages: number, currentPage: number }, items: Array<{ __typename?: 'Course', id: string, name: string, thumbnail?: string | null, description?: string | null, objectives?: Array<string> | null, fee: number, isPublished: boolean, status: CourseStatus, startDate: any, endDate: any, userId: string, gradeId: string, subjectId: string, createdAt: any, updatedAt: any }> } };
+
+export type CreateEnrolmentMutationVariables = Exact<{
+  classId: Scalars['ID']['input'];
+}>;
+
+
+export type CreateEnrolmentMutation = { __typename?: 'Mutation', createEnrolment: { __typename?: 'Enrolment', id: string, isFinished: boolean } };
 
 export type GradesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -868,11 +894,17 @@ export type SubjectsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type SubjectsQuery = { __typename?: 'Query', subjects: Array<{ __typename?: 'Subject', id: string, name: string }> };
 
+export type GetMeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMeQuery = { __typename?: 'Query', getMe: { __typename?: 'User', id: string, email: string, fullName: string, avatar?: string | null, phoneNumber: string, gender: number, birthday: any, roleId: string, createdAt: any, updatedAt: any, role: { __typename?: 'Role', name: string } } };
+
 
 export const LoginDocument = gql`
-    mutation login($email: String!, $password: String!) {
-  login(input: {email: $email, password: $password}) {
+    mutation login($input: LoginInput!) {
+  login(input: $input) {
     accessToken
+    refreshToken
   }
 }
     `;
@@ -891,8 +923,7 @@ export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutati
  * @example
  * const [loginMutation, { data, loading, error }] = useLoginMutation({
  *   variables: {
- *      email: // value for 'email'
- *      password: // value for 'password'
+ *      input: // value for 'input'
  *   },
  * });
  */
@@ -903,9 +934,70 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const RefreshTokenDocument = gql`
+    mutation refreshToken($token: String!) {
+  refreshToken(token: $token)
+}
+    `;
+export type RefreshTokenMutationFn = Apollo.MutationFunction<RefreshTokenMutation, RefreshTokenMutationVariables>;
+
+/**
+ * __useRefreshTokenMutation__
+ *
+ * To run a mutation, you first call `useRefreshTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRefreshTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [refreshTokenMutation, { data, loading, error }] = useRefreshTokenMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *   },
+ * });
+ */
+export function useRefreshTokenMutation(baseOptions?: Apollo.MutationHookOptions<RefreshTokenMutation, RefreshTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RefreshTokenMutation, RefreshTokenMutationVariables>(RefreshTokenDocument, options);
+      }
+export type RefreshTokenMutationHookResult = ReturnType<typeof useRefreshTokenMutation>;
+export type RefreshTokenMutationResult = Apollo.MutationResult<RefreshTokenMutation>;
+export type RefreshTokenMutationOptions = Apollo.BaseMutationOptions<RefreshTokenMutation, RefreshTokenMutationVariables>;
 export const CoursesDocument = gql`
-    query courses {
-  courses(queryParams: {pagination: {limit: 10, page: 1}}) {
+    query courses($queryParams: CourseQueryParams!) {
+  courses(queryParams: $queryParams) {
     meta {
       itemCount
       totalItems
@@ -946,10 +1038,11 @@ export const CoursesDocument = gql`
  * @example
  * const { data, loading, error } = useCoursesQuery({
  *   variables: {
+ *      queryParams: // value for 'queryParams'
  *   },
  * });
  */
-export function useCoursesQuery(baseOptions?: Apollo.QueryHookOptions<CoursesQuery, CoursesQueryVariables>) {
+export function useCoursesQuery(baseOptions: Apollo.QueryHookOptions<CoursesQuery, CoursesQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
         return Apollo.useQuery<CoursesQuery, CoursesQueryVariables>(CoursesDocument, options);
       }
@@ -960,6 +1053,40 @@ export function useCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Co
 export type CoursesQueryHookResult = ReturnType<typeof useCoursesQuery>;
 export type CoursesLazyQueryHookResult = ReturnType<typeof useCoursesLazyQuery>;
 export type CoursesQueryResult = Apollo.QueryResult<CoursesQuery, CoursesQueryVariables>;
+export const CreateEnrolmentDocument = gql`
+    mutation createEnrolment($classId: ID!) {
+  createEnrolment(input: {classId: $classId}) {
+    id
+    isFinished
+  }
+}
+    `;
+export type CreateEnrolmentMutationFn = Apollo.MutationFunction<CreateEnrolmentMutation, CreateEnrolmentMutationVariables>;
+
+/**
+ * __useCreateEnrolmentMutation__
+ *
+ * To run a mutation, you first call `useCreateEnrolmentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateEnrolmentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createEnrolmentMutation, { data, loading, error }] = useCreateEnrolmentMutation({
+ *   variables: {
+ *      classId: // value for 'classId'
+ *   },
+ * });
+ */
+export function useCreateEnrolmentMutation(baseOptions?: Apollo.MutationHookOptions<CreateEnrolmentMutation, CreateEnrolmentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateEnrolmentMutation, CreateEnrolmentMutationVariables>(CreateEnrolmentDocument, options);
+      }
+export type CreateEnrolmentMutationHookResult = ReturnType<typeof useCreateEnrolmentMutation>;
+export type CreateEnrolmentMutationResult = Apollo.MutationResult<CreateEnrolmentMutation>;
+export type CreateEnrolmentMutationOptions = Apollo.BaseMutationOptions<CreateEnrolmentMutation, CreateEnrolmentMutationVariables>;
 export const GradesDocument = gql`
     query grades {
   grades {
@@ -1030,3 +1157,49 @@ export function useSubjectsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<S
 export type SubjectsQueryHookResult = ReturnType<typeof useSubjectsQuery>;
 export type SubjectsLazyQueryHookResult = ReturnType<typeof useSubjectsLazyQuery>;
 export type SubjectsQueryResult = Apollo.QueryResult<SubjectsQuery, SubjectsQueryVariables>;
+export const GetMeDocument = gql`
+    query getMe {
+  getMe {
+    id
+    email
+    fullName
+    avatar
+    phoneNumber
+    gender
+    birthday
+    roleId
+    role {
+      name
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useGetMeQuery__
+ *
+ * To run a query within a React component, call `useGetMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMeQuery(baseOptions?: Apollo.QueryHookOptions<GetMeQuery, GetMeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMeQuery, GetMeQueryVariables>(GetMeDocument, options);
+      }
+export function useGetMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMeQuery, GetMeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMeQuery, GetMeQueryVariables>(GetMeDocument, options);
+        }
+export type GetMeQueryHookResult = ReturnType<typeof useGetMeQuery>;
+export type GetMeLazyQueryHookResult = ReturnType<typeof useGetMeLazyQuery>;
+export type GetMeQueryResult = Apollo.QueryResult<GetMeQuery, GetMeQueryVariables>;
