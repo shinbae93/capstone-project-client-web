@@ -1,0 +1,53 @@
+query course($id: ID!) {
+  course(id: $id) {
+    id
+    name
+    thumbnail
+    description
+    objectives
+    fee
+    isPublished
+    status
+    startDate
+    endDate
+    duration
+    userId
+    user {
+      id
+      avatar
+      fullName
+      tutorDetail {
+        headline
+        biography
+      }
+    }
+    grade {
+      id
+      name
+    }
+    subject {
+      id
+      name
+    }
+    classes {
+      id
+      name
+      method
+      schedule {
+        dayOfWeek
+        startTime {
+          hour
+          minute
+        }
+        endTime {
+          hour
+          minute
+        }
+      }
+      totalSlots
+      occupiedSlots
+    }
+    createdAt
+    updatedAt
+  }
+}

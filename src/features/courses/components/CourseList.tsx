@@ -9,14 +9,26 @@ import {
 } from '../../../graphql/generated/graphql.ts'
 import Loading from '../../../shared/components/Loading.tsx'
 import { CourseItem } from './CourseItem.tsx'
+import { useState } from 'react'
 
 interface FilterCourseDto {
   gradeIds: string[]
   subjectIds: string[]
 }
 
+const COURSE_SORTING = {
+  'newly published': {
+    field: 'publishedAt',
+    direction: 'ASC' | 'DESC',
+    nulls: 'NULLS FIRST' | 'NULLS LAST',
+  },
+  alphabetical: {},
+}
+
 const CourseList = () => {
   const navigate = useNavigate()
+
+  const [sorting, setSorting] = useState()
 
   const [searchParams] = useSearchParams()
   const q = searchParams.get('q')
@@ -177,7 +189,7 @@ const CourseList = () => {
 
             {/** Filter button */}
             <Form.Item className="mb-0">
-              <div className="text-center py-5">
+              <div className="text-center pt-5">
                 <Button
                   className="bg-primary h-9 font-semibold hover:border-primary hover:text-white"
                   htmlType="submit"

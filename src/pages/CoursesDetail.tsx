@@ -5,48 +5,57 @@ import {
   CheckOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons'
-import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
 import { Button, Form, Modal, Select, Table, Tag, Tooltip } from 'antd'
-import Column from 'antd/es/table/Column'
+import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useCreateEnrolmentMutation } from '../graphql/generated/graphql'
+import { Link, useParams } from 'react-router-dom'
+import { CourseStatusDisplay, DEFAULT_AVATAR, MOCK_TEXT } from '../common/constants'
+import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
+import {
+  Class,
+  CourseStatus,
+  ScheduleTime,
+  useCourseQuery,
+  useCreateEnrolmentMutation,
+} from '../graphql/generated/graphql'
+import Loading from '../shared/components/Loading'
+import { CurrencyFormatter } from '../utils/formater'
+import { convertScheduleToString } from '../utils/schedule'
 
-const whatLearns = [
-  'Becoming familiar with the NestJS framework and its components',
-  'Designing and developing REST APIs performing CRUD operations',
-  'Authentication and Authorization for back-end applications',
-  'Using TypeORM for database interaction',
-  'Security best practices, password hashing and storing sensitive information',
-  'Persisting data using a database',
-  'Deploying back-end applications at a production-ready state to Amazon Web Services',
-  'Writing clean, maintainable code in-line with industry standards',
-  'Utilising the NestJS Command Line Interface (CLI)',
-  'Using Postman for testing back-end services',
-]
-
-interface ClassItemType {
-  key: React.Key
-  name: string
-  method: string
-  schedule: string[]
-  students: string
-}
-
-const data: ClassItemType[] = [
+const classColumns: ColumnsType<Class> = [
   {
-    key: '1',
-    name: 'Cơ bản',
-    method: 'Offline',
-    schedule: ['Thứ 3: 7 AM - 9 AM', 'Thứ 5: 3 PM - 5 PM'],
-    students: '30/60',
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    render: (name: string) => <p className="font-thin">{name}</p>,
   },
   {
-    key: '2',
-    name: 'Nâng cao',
-    method: 'Online',
-    schedule: ['Thứ 2: 9 AM - 11 AM', ' Thứ 4: 1 PM - 3 PM'],
-    students: '40/60',
+    title: 'Method',
+    dataIndex: 'method',
+    key: 'method',
+    render: (method: string) => <p className="font-thin font-mono">{method}</p>,
+  },
+  {
+    title: 'Schedule',
+    dataIndex: 'schedule',
+    key: 'schedule',
+    render: (schedule: ScheduleTime[]) => (
+      <>
+        {schedule?.map((item, index) => (
+          <p key={index} className="font-thin">
+            {convertScheduleToString(item)}
+          </p>
+        ))}
+      </>
+    ),
+  },
+  {
+    title: 'Students',
+    dataIndex: ['totalSlots', 'occupiedSlots'],
+    key: 'students',
+    render: (_, { occupiedSlots, totalSlots }) => (
+      <p className="font-thin font-mono">{`${occupiedSlots}/${totalSlots}`}</p>
+    ),
   },
 ]
 
@@ -55,9 +64,11 @@ const CoursesDetail = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const [createEnrolmentMutation] = useCreateEnrolmentMutation({
+  const [createEnrolmentMutation] = useCreateEnrolmentMutation()
+
+  const { data, loading, refetch } = useCourseQuery({
     variables: {
-      classId: String(id),
+      id: String(id),
     },
   })
 
@@ -73,41 +84,33 @@ const CoursesDetail = () => {
     setIsModalOpen(false)
   }
 
-  return (
+  return loading ? (
+    <Loading />
+  ) : (
     <div>
       {/** Breadcrumb */}
-      <CourseDetailBreadcrumb />
+      <CourseDetailBreadcrumb id={data?.course?.id || ''} name={data?.course?.name || ''} />
       {/** Header of course */}
       <div className="py-16 bg-info">
         <div className="px-28 relative">
           <div className="text-white w-2/3">
-            <p className="text-2xl leading-snug mb-5">Create an LMS Website with LearnPress</p>
-            <p className="text-sm font-light opacity-80 mb-5">
-              A series of Videos from ThimPress, give you a detailed tutorial to create an LMS
-              Website with LearnPress – LMS & Education WordPress Plugin. This course is a detailed
-              and easy tutorial to get you all setup and going with …
-            </p>
+            <p className="text-2xl leading-snug mb-5">{data?.course?.name || ''}</p>
+            <p className="text-sm font-light opacity-80 mb-5">{data?.course?.description || ''}</p>
             <div className="flex flex-row">
               <div className="align-middle">
-                <span className="inline-block">
-                  <img
-                    src="https://secure.gravatar.com/avatar/b08d0d3bc9bf251a412e53566ac82b54?s=50&amp;r=g"
-                    className="rounded-full inline-block h-10"
-                  />
-                  <span className="inline-block align-middle px-4 border-r-[1px] border-r-info">
-                    <p className="text-[12px] font-thin">Teacher</p>
-                    <p className="text-sm">Keny White</p>
+                <Link to="">
+                  <span className="inline-block">
+                    <img
+                      src={data?.course?.user?.avatar || DEFAULT_AVATAR}
+                      className="rounded-full inline-block h-10"
+                    />
+                    <span className="inline-block align-middle px-4">
+                      <p className="text-[12px] font-thin">Teacher</p>
+                      <p className="text-sm">{data?.course?.user?.fullName}</p>
+                    </span>
                   </span>
-                </span>
+                </Link>
               </div>
-              <span className="inline-block align-middle px-4 border-r-[1px] border-r-info">
-                <p className="text-[12px] font-thin">Teacher</p>
-                <p className="text-sm">Keny White</p>
-              </span>
-              <span className="inline-block align-middle px-4">
-                <p className="text-[12px] font-thin">Teacher</p>
-                <p className="text-sm">Keny White</p>
-              </span>
             </div>
           </div>
           {/** Sticky sidebar */}
@@ -118,26 +121,34 @@ const CoursesDetail = () => {
                 alt=""
               />
               <div className="px-3">
-                <p className="text-xl py-5 font-bold">Free</p>
+                <p className="text-xl py-5 font-bold font-sans">
+                  {data?.course?.fee && data?.course?.fee > 0
+                    ? CurrencyFormatter.format(data?.course?.fee)
+                    : 'Free'}
+                </p>
                 <p className="font-semibold pb-3">Course information:</p>
                 <span className="flex flex-row items-center py-1">
                   <Tooltip title="Grade">
                     <BankOutlined className="text-primary" />
                   </Tooltip>
-                  <p className="inline-block text-sm font-thin text-slate-600 px-2">Grade 9</p>
+                  <p className="inline-block text-sm font-thin text-slate-600 px-2">
+                    {data?.course?.grade?.name}
+                  </p>
                 </span>
                 <span className="flex flex-row items-center py-2">
                   <Tooltip title="Subject">
                     <BookOutlined className="text-primary" />
                   </Tooltip>
-                  <p className="inline-block text-sm font-thin text-slate-600 px-2">Math</p>
+                  <p className="inline-block text-sm font-thin text-slate-600 px-2">
+                    {data?.course?.subject?.name}
+                  </p>
                 </span>
                 <span className="flex flex-row items-center py-1">
                   <Tooltip title="Duration">
                     <ClockCircleOutlined className="text-primary" />
                   </Tooltip>
                   <p className="inline-block text-sm font-thin text-slate-600 px-2">
-                    Duration 3 months
+                    Duration {data?.course?.duration || 0} months
                   </p>
                 </span>
                 <span className="flex flex-row items-center py-1">
@@ -145,11 +156,18 @@ const CoursesDetail = () => {
                     <CalendarOutlined className="text-primary" />
                   </Tooltip>
                   <Tag color="#87d068" className="mx-2">
-                    <p className="inline-block text-sm font-thin text-white">Upcoming</p>
+                    <p className="inline-block text-sm font-thin text-white">
+                      {CourseStatusDisplay[data?.course?.status || 'UP_COMING']}
+                    </p>
                   </Tag>
                 </span>
                 <span className="flex justify-center pt-4 pb-2">
-                  <Button className="bg-primary" type="primary" onClick={showModal}>
+                  <Button
+                    className="bg-primary"
+                    type="primary"
+                    onClick={showModal}
+                    disabled={data?.course?.status == CourseStatus.Ended}
+                  >
                     <p className="font-medium">Enroll Now</p>
                   </Button>
                 </span>
@@ -164,7 +182,7 @@ const CoursesDetail = () => {
           <div className="p-5">
             <p className="font-semibold pb-4 border-b-[1px] border-info">WHAT YOU'LL LEARN</p>
             <div className="pt-5">
-              {whatLearns.map((item, index) => (
+              {data?.course?.objectives?.map((item, index) => (
                 <span className="flex flex-row items-center py-2" key={index}>
                   <CheckOutlined />
                   <p className="inline-block text-sm font-thin text-slate-600 px-3">{item}</p>
@@ -177,40 +195,11 @@ const CoursesDetail = () => {
         <div className="py-8">
           <p className="text-xl py-7">AVAILABLE CLASSES</p>
           <div>
-            <Table dataSource={data} pagination={false}>
-              <Column
-                title="Name"
-                dataIndex="name"
-                key="name"
-                render={(name: string) => <p className="font-thin">{name}</p>}
-              />
-              <Column
-                title="Method"
-                dataIndex="method"
-                key="method"
-                render={(method: string) => <p className="font-thin font-mono">{method}</p>}
-              />
-              <Column
-                title="Schedule"
-                dataIndex="schedule"
-                key="schedule"
-                render={(schedule: string[]) => (
-                  <>
-                    {schedule?.map((item, index) => (
-                      <p key={index} className="font-thin">
-                        {item}
-                      </p>
-                    ))}
-                  </>
-                )}
-              />
-              <Column
-                title="Students"
-                dataIndex="students"
-                key="students"
-                render={(method: string) => <p className="font-thin font-mono">{method}</p>}
-              />
-            </Table>
+            <Table
+              dataSource={data?.course?.classes || []}
+              pagination={false}
+              columns={classColumns as any}
+            ></Table>
           </div>
         </div>
 
@@ -219,19 +208,16 @@ const CoursesDetail = () => {
             <p className="font-semibold pb-4 border-b-[1px] border-info">TUTOR</p>
             <div className="py-7 flex flex-row gap-7">
               <img
-                src="https://secure.gravatar.com/avatar/b08d0d3bc9bf251a412e53566ac82b54?s=110&r=g"
+                src={data?.course?.user?.avatar || DEFAULT_AVATAR}
                 className="rounded-full h-28 w-28"
               />
               <div>
-                <p className="font-semibold text-base py-1">Keny White</p>
-                <p className="font-thin text-xs pb-4 text-footer">Professor</p>
+                <p className="font-semibold text-base py-1">{data?.course?.user?.fullName}</p>
+                <p className="font-thin text-xs pb-4 text-footer">
+                  {data?.course?.user?.tutorDetail?.headline}
+                </p>
                 <p className="font-thin text-xs leading-6">
-                  Lorem ipsum dolor sit amet. Qui incidunt dolores non similique ducimus et debitis
-                  molestiae. Et autem quia eum reprehenderit voluptates est reprehenderit illo est
-                  enim perferendis est neque sunt. Nam amet sunt aut vero mollitia ut ipsum corporis
-                  vel facere eius et quia aspernatur qui fugiat repudiandae. Et officiis inventore
-                  et quis enim ut quaerat corporis sed reprehenderit odit sit saepe distinctio et
-                  accusantium repellendus ea enim harum.
+                  {data?.course?.user?.tutorDetail?.biography || MOCK_TEXT}
                 </p>
               </div>
             </div>
@@ -242,15 +228,50 @@ const CoursesDetail = () => {
       <Modal
         title="Enrollment"
         open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        okButtonProps={{ className: 'bg-primary' }}
+        footer={[
+          <Button onClick={handleCancel}>Cancel</Button>,
+          <Button
+            form="createEnrolment"
+            key="submit"
+            htmlType="submit"
+            className="bg-primary text-white hover:border-primary"
+          >
+            OK
+          </Button>,
+        ]}
       >
-        <Form layout="vertical" style={{ maxWidth: 600 }} className="border-t-[1px] border-info">
-          <Form.Item label={<p>Please select class to complete your enrolment</p>} className="py-6">
+        <Form
+          layout="vertical"
+          style={{ maxWidth: 600 }}
+          className="border-t-[1px] border-info"
+          id="createEnrolment"
+          onFinish={async ({ classId }) => {
+            const { errors } = await createEnrolmentMutation({
+              variables: {
+                classId,
+              },
+            })
+            handleOk()
+            if (!errors?.length) {
+              refetch()
+            }
+          }}
+        >
+          <Form.Item
+            messageVariables={{ name: 'Class' }}
+            label={<p>Please select class to complete your enrolment</p>}
+            className="py-6"
+            name="classId"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            required
+          >
             <Select className="py-1" placeholder="Select class...">
-              {data.map((item) => (
-                <Select.Option value={item.key} key={item.key}>
+              {data?.course?.classes?.map((item, index) => (
+                <Select.Option value={item.id} key={index}>
                   {item.name}
                 </Select.Option>
               ))}

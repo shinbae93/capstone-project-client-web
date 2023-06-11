@@ -18,7 +18,14 @@ query courses($queryParams: CourseQueryParams!) {
       status
       startDate
       endDate
+      duration
       userId
+      user {
+        id
+        avatar
+        fullName
+        email
+      }
       gradeId
       subjectId
       createdAt

@@ -27,7 +27,9 @@ export type Class = {
   id: Scalars['ID']['output'];
   method: ClassMethod;
   name: Scalars['String']['output'];
+  occupiedSlots: Scalars['Float']['output'];
   schedule: Array<ScheduleTime>;
+  totalSlots: Scalars['Float']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
 
@@ -41,6 +43,7 @@ export type Course = {
   classes?: Maybe<Array<Class>>;
   createdAt: Scalars['DateTime']['output'];
   description?: Maybe<Scalars['String']['output']>;
+  duration: Scalars['Float']['output'];
   endDate: Scalars['Date']['output'];
   fee: Scalars['Float']['output'];
   grade: Grade;
@@ -49,6 +52,7 @@ export type Course = {
   isPublished: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   objectives?: Maybe<Array<Scalars['String']['output']>>;
+  publishedAt?: Maybe<Scalars['DateTime']['output']>;
   startDate: Scalars['Date']['output'];
   status: CourseStatus;
   subject: Subject;
@@ -89,6 +93,7 @@ export type CreateClassInput = {
   method: ClassMethod;
   name: Scalars['String']['input'];
   schedule: Array<ScheduleTimeInput>;
+  totalSlots: Scalars['Int']['input'];
 };
 
 export type CreateCourseInput = {
@@ -747,6 +752,7 @@ export type UpdateClassInput = {
   method?: InputMaybe<ClassMethod>;
   name?: InputMaybe<Scalars['String']['input']>;
   schedule?: InputMaybe<Array<ScheduleTimeInput>>;
+  totalSlots?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateCourseInput = {
@@ -870,12 +876,19 @@ export type RefreshTokenMutationVariables = Exact<{
 
 export type RefreshTokenMutation = { __typename?: 'Mutation', refreshToken: string };
 
+export type CourseQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type CourseQuery = { __typename?: 'Query', course: { __typename?: 'Course', id: string, name: string, thumbnail?: string | null, description?: string | null, objectives?: Array<string> | null, fee: number, isPublished: boolean, status: CourseStatus, startDate: any, endDate: any, duration: number, userId: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, avatar?: string | null, fullName: string, tutorDetail: { __typename?: 'TutorDetail', headline?: string | null, biography?: string | null } }, grade: { __typename?: 'Grade', id: string, name: string }, subject: { __typename?: 'Subject', id: string, name: string }, classes?: Array<{ __typename?: 'Class', id: string, name: string, method: ClassMethod, totalSlots: number, occupiedSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: { __typename?: 'LessonTime', hour: number, minute: number }, endTime: { __typename?: 'LessonTime', hour: number, minute: number } }> }> | null } };
+
 export type CoursesQueryVariables = Exact<{
   queryParams: CourseQueryParams;
 }>;
 
 
-export type CoursesQuery = { __typename?: 'Query', courses: { __typename?: 'CoursesPagination', meta: { __typename?: 'PaginationMeta', itemCount: number, totalItems: number, itemsPerPage: number, totalPages: number, currentPage: number }, items: Array<{ __typename?: 'Course', id: string, name: string, thumbnail?: string | null, description?: string | null, objectives?: Array<string> | null, fee: number, isPublished: boolean, status: CourseStatus, startDate: any, endDate: any, userId: string, gradeId: string, subjectId: string, createdAt: any, updatedAt: any }> } };
+export type CoursesQuery = { __typename?: 'Query', courses: { __typename?: 'CoursesPagination', meta: { __typename?: 'PaginationMeta', itemCount: number, totalItems: number, itemsPerPage: number, totalPages: number, currentPage: number }, items: Array<{ __typename?: 'Course', id: string, name: string, thumbnail?: string | null, description?: string | null, objectives?: Array<string> | null, fee: number, isPublished: boolean, status: CourseStatus, startDate: any, endDate: any, duration: number, userId: string, gradeId: string, subjectId: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, avatar?: string | null, fullName: string, email: string } }> } };
 
 export type CreateEnrolmentMutationVariables = Exact<{
   classId: Scalars['ID']['input'];
@@ -995,6 +1008,89 @@ export function useRefreshTokenMutation(baseOptions?: Apollo.MutationHookOptions
 export type RefreshTokenMutationHookResult = ReturnType<typeof useRefreshTokenMutation>;
 export type RefreshTokenMutationResult = Apollo.MutationResult<RefreshTokenMutation>;
 export type RefreshTokenMutationOptions = Apollo.BaseMutationOptions<RefreshTokenMutation, RefreshTokenMutationVariables>;
+export const CourseDocument = gql`
+    query course($id: ID!) {
+  course(id: $id) {
+    id
+    name
+    thumbnail
+    description
+    objectives
+    fee
+    isPublished
+    status
+    startDate
+    endDate
+    duration
+    userId
+    user {
+      id
+      avatar
+      fullName
+      tutorDetail {
+        headline
+        biography
+      }
+    }
+    grade {
+      id
+      name
+    }
+    subject {
+      id
+      name
+    }
+    classes {
+      id
+      name
+      method
+      schedule {
+        dayOfWeek
+        startTime {
+          hour
+          minute
+        }
+        endTime {
+          hour
+          minute
+        }
+      }
+      totalSlots
+      occupiedSlots
+    }
+    createdAt
+    updatedAt
+  }
+}
+    `;
+
+/**
+ * __useCourseQuery__
+ *
+ * To run a query within a React component, call `useCourseQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCourseQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCourseQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCourseQuery(baseOptions: Apollo.QueryHookOptions<CourseQuery, CourseQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CourseQuery, CourseQueryVariables>(CourseDocument, options);
+      }
+export function useCourseLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CourseQuery, CourseQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CourseQuery, CourseQueryVariables>(CourseDocument, options);
+        }
+export type CourseQueryHookResult = ReturnType<typeof useCourseQuery>;
+export type CourseLazyQueryHookResult = ReturnType<typeof useCourseLazyQuery>;
+export type CourseQueryResult = Apollo.QueryResult<CourseQuery, CourseQueryVariables>;
 export const CoursesDocument = gql`
     query courses($queryParams: CourseQueryParams!) {
   courses(queryParams: $queryParams) {
@@ -1016,7 +1112,14 @@ export const CoursesDocument = gql`
       status
       startDate
       endDate
+      duration
       userId
+      user {
+        id
+        avatar
+        fullName
+        email
+      }
       gradeId
       subjectId
       createdAt
