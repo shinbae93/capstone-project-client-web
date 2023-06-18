@@ -12,13 +12,16 @@ import NotFoundPage from './pages/404'
 import ProfileLayout from './layouts/ProfileLayout'
 import MyLearning from './pages/MyLearning'
 import MyCourses from './pages/MyCourses'
+import AuthLayout from './layouts/AuthLayout'
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<AuthLayout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />

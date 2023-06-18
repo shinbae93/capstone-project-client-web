@@ -7,7 +7,7 @@ import Highlighter from 'react-highlight-words'
 import { CourseStatus, PaginationMeta } from '../../../graphql/generated/graphql'
 import { CourseStatusDisplay } from '../../../common/constants'
 import { Link } from 'react-router-dom'
-import { CurrencyFormatter } from '../../../utils/formater'
+import { CurrencyFormatter } from '../../../utils/format'
 import dayjs from 'dayjs'
 
 export interface LearningItemDataType {

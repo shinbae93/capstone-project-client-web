@@ -19,7 +19,7 @@ import {
   useCreateEnrolmentMutation,
 } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
-import { CurrencyFormatter } from '../utils/formater'
+import { CurrencyFormatter } from '../utils/format'
 import { convertScheduleToString } from '../utils/schedule'
 
 const classColumns: ColumnsType<Class> = [

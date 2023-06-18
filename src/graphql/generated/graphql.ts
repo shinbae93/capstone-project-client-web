@@ -206,6 +206,12 @@ export type EnrolmentsPagination = {
   meta: PaginationMeta
 }
 
+export enum Gender {
+  Female = 'FEMALE',
+  Male = 'MALE',
+  Other = 'OTHER',
+}
+
 export type Grade = {
   __typename?: 'Grade'
   createdAt: Scalars['DateTime']['output']
@@ -613,9 +619,10 @@ export type Quiz = {
 export type RegisterInput = {
   avatar?: InputMaybe<Scalars['String']['input']>
   birthday: Scalars['DateTime']['input']
+  confirmPassword: Scalars['String']['input']
   email: Scalars['String']['input']
   fullName: Scalars['String']['input']
-  gender: Scalars['Float']['input']
+  gender: Gender
   password: Scalars['String']['input']
   phoneNumber: Scalars['String']['input']
 }
@@ -810,7 +817,7 @@ export type UpdateTutorReviewInput = {
 export type User = {
   __typename?: 'User'
   avatar?: Maybe<Scalars['String']['output']>
-  birthday: Scalars['DateTime']['output']
+  birthday: Scalars['Date']['output']
   createdAt: Scalars['DateTime']['output']
   email: Scalars['String']['output']
   fullName: Scalars['String']['output']
@@ -841,6 +848,15 @@ export type RefreshTokenMutationVariables = Exact<{
 }>
 
 export type RefreshTokenMutation = { __typename?: 'Mutation'; refreshToken: string }
+
+export type RegisterMutationVariables = Exact<{
+  input: RegisterInput
+}>
+
+export type RegisterMutation = {
+  __typename?: 'Mutation'
+  register: { __typename?: 'User'; id: string }
+}
 
 export type CreateCourseMutationVariables = Exact<{
   input: CreateCourseInput
@@ -1203,6 +1219,47 @@ export type RefreshTokenMutationResult = Apollo.MutationResult<RefreshTokenMutat
 export type RefreshTokenMutationOptions = Apollo.BaseMutationOptions<
   RefreshTokenMutation,
   RefreshTokenMutationVariables
+>
+export const RegisterDocument = gql`
+  mutation register($input: RegisterInput!) {
+    register(input: $input) {
+      id
+    }
+  }
+`
+export type RegisterMutationFn = Apollo.MutationFunction<
+  RegisterMutation,
+  RegisterMutationVariables
+>
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRegisterMutation(
+  baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>
+) {
+  const options = { ...defaultOptions, ...baseOptions }
+  return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options)
+}
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<
+  RegisterMutation,
+  RegisterMutationVariables
 >
 export const CreateCourseDocument = gql`
   mutation createCourse($input: CreateCourseInput!) {

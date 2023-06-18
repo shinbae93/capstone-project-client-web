@@ -8,14 +8,13 @@ import UploadInput from '../../../shared/components/UploadInput'
 import { CalendarOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import * as dayjs from 'dayjs'
 import { UploadChangeParam } from 'antd/es/upload'
+import { getDateInput } from '../../../utils/form'
 
 interface CreateCourseFormProps {
   open: boolean
   onCreate: (input: CreateCourseInput) => void
   onCancel: () => void
 }
-
-const getDateInput = (e: dayjs.Dayjs) => e.toDate()
 
 const getFile = (e: UploadChangeParam<UploadFile>) => e && e.fileList && e.fileList[0].url
 

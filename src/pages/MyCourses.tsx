@@ -26,7 +26,7 @@ import {
   useRemoveCourseMutation,
 } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
-import { CurrencyFormatter } from '../utils/formater'
+import { CurrencyFormatter } from '../utils/format'
 import { toastCreateSuccess, toastRemoveSuccess, toastUpdateSuccess } from '../utils/toast'
 import UpdateCourseForm from '../features/my-courses/components/UpdateCourseForm'
 import dayjs from 'dayjs'
