@@ -9,6 +9,9 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import PrivateRoute from './shared/routers/PrivateRoute'
 import NotFoundPage from './pages/404'
+import ProfileLayout from './layouts/ProfileLayout'
+import MyLearning from './pages/MyLearning'
+import MyCourses from './pages/MyCourses'
 
 function App() {
   return (
@@ -18,9 +21,13 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/courses" element={<Courses />} />
-            <Route path="/courses/:id" element={<CoursesDetail />} />
+            <Route index element={<Home />} />
+            <Route path="courses" element={<Courses />} />
+            <Route path="courses/:id" element={<CoursesDetail />} />
+            <Route path="profile" element={<ProfileLayout />}>
+              <Route path="my-learning" element={<MyLearning />} />
+              <Route path="my-courses" element={<MyCourses />} />
+            </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Route>

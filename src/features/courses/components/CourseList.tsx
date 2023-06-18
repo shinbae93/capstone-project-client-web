@@ -16,14 +16,14 @@ interface FilterCourseDto {
   subjectIds: string[]
 }
 
-const COURSE_SORTING = {
-  'newly published': {
-    field: 'publishedAt',
-    direction: 'ASC' | 'DESC',
-    nulls: 'NULLS FIRST' | 'NULLS LAST',
-  },
-  alphabetical: {},
-}
+// const COURSE_SORTING = {
+//   'newly published': {
+//     field: 'publishedAt',
+//     direction: 'ASC' | 'DESC',
+//     nulls: 'NULLS FIRST' | 'NULLS LAST',
+//   },
+//   alphabetical: {},
+// }
 
 const CourseList = () => {
   const navigate = useNavigate()

@@ -49,7 +49,7 @@ const Header = () => {
                 {
                   key: '1',
                   label: (
-                    <Link to="/">
+                    <Link to="/profile/my-learning">
                       <p className="px-1 text-sm my-1">My learning</p>
                     </Link>
                   ),

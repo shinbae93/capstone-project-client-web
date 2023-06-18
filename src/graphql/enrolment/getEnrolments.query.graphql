@@ -1,0 +1,28 @@
+query enrolments($queryParams: EnrolmentQueryParams) {
+  enrolments(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      isFinished
+      course {
+        id
+        name
+        status
+        thumbnail
+        fee
+        startDate
+        endDate
+        user {
+          id
+          fullName
+        }
+      }
+    }
+  }
+}

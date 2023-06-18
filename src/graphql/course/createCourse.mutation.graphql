@@ -1,5 +1,5 @@
-query course($id: ID!) {
-  course(id: $id) {
+mutation createCourse($input: CreateCourseInput!) {
+  createCourse(input: $input) {
     id
     name
     thumbnail
@@ -8,7 +8,6 @@ query course($id: ID!) {
     fee
     isPublished
     status
-    paymentDate
     startDate
     endDate
     duration
@@ -35,19 +34,6 @@ query course($id: ID!) {
     classes {
       id
       name
-      method
-      schedule {
-        dayOfWeek
-        startTime {
-          hour
-          minute
-        }
-        endTime {
-          hour
-          minute
-        }
-      }
-      totalSlots
       occupiedSlots
     }
     createdAt

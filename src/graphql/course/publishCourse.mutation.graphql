@@ -1,0 +1,5 @@
+mutation publishCourse($id: ID!) {
+  publishCourse(id: $id) {
+    id
+  }
+}

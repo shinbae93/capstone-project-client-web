@@ -1,0 +1,5 @@
+mutation updateCourse($input: UpdateCourseInput!) {
+  updateCourse(input: $input) {
+    id
+  }
+}

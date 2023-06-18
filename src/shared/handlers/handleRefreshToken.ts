@@ -4,7 +4,6 @@ import { LogoutDocument, RefreshTokenDocument } from '../../graphql/generated/gr
 import { clearRefreshToken, clearToken, getRefreshToken, setToken } from '../../utils/token'
 import { client } from '../../config/apollo-client'
 import { setRequestHeaders } from '../../utils/auth'
-import { MyWindow } from '../../utils/type'
 import { notification } from 'antd'
 
 type CallbackFunction = (value?: unknown) => void
@@ -35,9 +34,7 @@ export const handleRefreshToken = ({ forward, operation }: ErrorResponse) => {
           .mutate({
             mutation: RefreshTokenDocument,
             variables: {
-              input: {
-                refreshToken,
-              },
+              token: refreshToken,
             },
           })
           .then((res) => {
@@ -56,7 +53,6 @@ export const handleRefreshToken = ({ forward, operation }: ErrorResponse) => {
             notification.error({
               message: 'Your session is expired.',
             })
-            ;(window as unknown as MyWindow).pushLogin()
             client.mutate({
               mutation: LogoutDocument,
               variables: {

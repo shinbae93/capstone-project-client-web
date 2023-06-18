@@ -155,7 +155,16 @@ const CoursesDetail = () => {
                   <Tooltip title="Status">
                     <CalendarOutlined className="text-primary" />
                   </Tooltip>
-                  <Tag color="#87d068" className="mx-2">
+                  <Tag
+                    color={
+                      data?.course?.status == 'UP_COMING'
+                        ? '#87d068'
+                        : data?.course?.status == 'IN_PROGRESS'
+                        ? '#2db7f5'
+                        : '#ED2B2A'
+                    }
+                    className="mx-2"
+                  >
                     <p className="inline-block text-sm font-thin text-white">
                       {CourseStatusDisplay[data?.course?.status || 'UP_COMING']}
                     </p>

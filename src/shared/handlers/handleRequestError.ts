@@ -1,6 +1,6 @@
 import { Operation } from '@apollo/client'
 import { GraphQLErrors } from '@apollo/client/errors'
-import { message, notification } from 'antd'
+import { notification } from 'antd'
 
 interface RequestErrorProps {
   graphQLErrors: GraphQLErrors
@@ -8,10 +8,6 @@ interface RequestErrorProps {
 }
 
 export const handleRequestError = ({ graphQLErrors, operation }: RequestErrorProps) => {
-  console.log(
-    '🚀 ~ file: handleRequestError.tsx:11 ~ handleRequestError ~ graphQLErrors:',
-    graphQLErrors
-  )
   if (operation.operationName === 'refreshToken') return
 
   notification.error({

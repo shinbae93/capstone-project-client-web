@@ -1,4 +1,4 @@
-import CourseBreadcrumb from '../features/courses/components/Breadcrumb'
+import CourseBreadcrumb from '../features/profile/components/Breadcrumb'
 import CourseList from '../features/courses/components/CourseList'
 
 const Courses = () => {

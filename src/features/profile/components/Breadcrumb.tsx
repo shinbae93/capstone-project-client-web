@@ -2,7 +2,7 @@ import { RightOutlined } from '@ant-design/icons'
 import { Breadcrumb } from 'antd'
 import { Link } from 'react-router-dom'
 
-const CourseBreadcrumb = () => {
+const ProfileBreadcrumb = () => {
   return (
     <div className="bg-breadcrumb">
       <div className="px-28 py-4">
@@ -18,10 +18,10 @@ const CourseBreadcrumb = () => {
             {
               title: (
                 <Link
-                  to="/courses"
+                  to="/profile"
                   className="text-breadcrumb hover:bg-transparent font-normal text-sm"
                 >
-                  Courses
+                  Profile
                 </Link>
               ),
             },
@@ -35,4 +35,4 @@ const CourseBreadcrumb = () => {
   )
 }
 
-export default CourseBreadcrumb
+export default ProfileBreadcrumb

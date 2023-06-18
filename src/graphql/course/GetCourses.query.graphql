@@ -26,6 +26,9 @@ query courses($queryParams: CourseQueryParams!) {
         fullName
         email
       }
+      classes {
+        occupiedSlots
+      }
       gradeId
       subjectId
       createdAt

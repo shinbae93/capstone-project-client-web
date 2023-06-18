@@ -1,10 +1,10 @@
 import { ApolloClient, ApolloLink, InMemoryCache, createHttpLink, from } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
-import { get } from 'lodash'
 import { handleRefreshToken } from '../shared/handlers/handleRefreshToken'
 import { handleRequestError } from '../shared/handlers/handleRequestError'
 import { setRequestHeaders } from '../utils/auth'
 import { getToken } from '../utils/token'
+import { omitDeep } from '../utils/type'
 
 const httpLink = createHttpLink({
   uri: 'http://localhost:3000/graphql',
@@ -26,7 +26,14 @@ const errorLink = onError(({ graphQLErrors, forward, operation }) => {
   }
 })
 
+const cleanTypenameLink = new ApolloLink((operation, forward) => {
+  if (!operation.variables.file) {
+    operation.variables = omitDeep(operation.variables, '__typename')
+  }
+  return forward(operation)
+})
+
 export const client = new ApolloClient({
-  link: from([authLink, errorLink, httpLink]),
+  link: from([cleanTypenameLink, authLink, errorLink, httpLink]),
   cache: new InMemoryCache(),
 })
