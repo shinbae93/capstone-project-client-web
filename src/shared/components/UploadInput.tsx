@@ -3,12 +3,11 @@ import { FormInstance, Modal, Upload } from 'antd'
 import { UploadFile } from 'antd/es/upload'
 import { S3 } from 'aws-sdk'
 import { FC, useState } from 'react'
+import { getFileNameFromUrl } from '../../utils/form'
 
 interface UploadInputProps {
   form: FormInstance
 }
-
-const getFileNameFromUrl = (url: string) => url.split('/').at(-1) || '#@!#@!#!@#!@'
 
 const UploadInput: FC<UploadInputProps> = ({ form }) => {
   const [previewOpen, setPreviewOpen] = useState(false)

@@ -13,6 +13,7 @@ import ProfileLayout from './layouts/ProfileLayout'
 import MyLearning from './pages/MyLearning'
 import MyCourses from './pages/MyCourses'
 import AuthLayout from './layouts/AuthLayout'
+import BecomeTeacher from './pages/BecomeTeacher'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="become-teacher" element={<BecomeTeacher />} />
             <Route path="courses" element={<Courses />} />
             <Route path="courses/:id" element={<CoursesDetail />} />
             <Route path="profile" element={<ProfileLayout />}>

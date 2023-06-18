@@ -4,6 +4,7 @@ import { useState, useContext } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/auth.context'
 import useAuthenication from '../hooks/useAuthentication'
+import { RoleId } from '../common/constants'
 
 const Header = () => {
   const navigate = useNavigate()
@@ -38,11 +39,16 @@ const Header = () => {
             </Form.Item>
           </Form>
         </div>
-        <span className="px-6 text-base">
-          <p>Become a Teacher</p>
-        </span>
+        {currentUser?.roleId != RoleId.TUTOR && (
+          <span className="px-6 text-base">
+            <Link to="/become-teacher">
+              <p>Become a Teacher</p>
+            </Link>
+          </span>
+        )}
         {currentUser ? (
           <Dropdown
+            className="ml-5"
             placement="bottom"
             menu={{
               items: [

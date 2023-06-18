@@ -1,0 +1,5 @@
+mutation createTutorRequest($input: CreateTutorRequestInput!) {
+  createTutorRequest(input: $input) {
+    id
+  }
+}

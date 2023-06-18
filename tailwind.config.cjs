@@ -16,7 +16,7 @@ export default {
       textColor: {
         normal: '#584C47',
         footer: '#999999',
-        breadcrumb: '#666666',
+        breadcrumb: '#333333',
       },
       gridTemplateColumns: {
         'course-item': '270px 1fr',
