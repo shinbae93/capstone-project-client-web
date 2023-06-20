@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import './App.css'
 import Layout from './layouts/Layout'
 import Courses from './pages/Courses'
-import CoursesDetail from './pages/CoursesDetail'
+import CourseDetail from './pages/CourseDetail'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -14,6 +14,8 @@ import MyLearning from './pages/MyLearning'
 import MyCourses from './pages/MyCourses'
 import AuthLayout from './layouts/AuthLayout'
 import BecomeTeacher from './pages/BecomeTeacher'
+import GeneralProfile from './pages/GeneralProfile'
+import ChangePassword from './pages/ChangePassword'
 
 function App() {
   return (
@@ -28,10 +30,12 @@ function App() {
             <Route index element={<Home />} />
             <Route path="become-teacher" element={<BecomeTeacher />} />
             <Route path="courses" element={<Courses />} />
-            <Route path="courses/:id" element={<CoursesDetail />} />
+            <Route path="courses/:id" element={<CourseDetail />} />
             <Route path="profile" element={<ProfileLayout />}>
               <Route path="my-learning" element={<MyLearning />} />
               <Route path="my-courses" element={<MyCourses />} />
+              <Route path="general" element={<GeneralProfile />} />
+              <Route path="change-password" element={<ChangePassword />} />
             </Route>
             <Route path="*" element={<NotFoundPage />} />
           </Route>

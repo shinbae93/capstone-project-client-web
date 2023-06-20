@@ -67,8 +67,8 @@ const BecomeTeacher = () => {
             </p>
             <span className="absolute bottom-0 h-[1px] w-[35px] bg-[#333333] box-border right-0 left-0 m-auto"></span>
           </div>
-          <div className="mt-5 flex flex-row justify-evenly">
-            <Form className="flex items-center justify-center" onFinish={sendTutorRequest}>
+          <div className="mt-5 flex flex-row justify-evenly items-center">
+            <Form onFinish={sendTutorRequest}>
               <Form.Item
                 label={<p className="font-medium text-center">Upload your CV here</p>}
                 required
@@ -113,8 +113,7 @@ const BecomeTeacher = () => {
               </Form.Item>
               <Form.Item>
                 <Button
-                  block
-                  className="rounded-lg font-medium ml-5 shadow-sm"
+                  className="rounded-lg font-medium ml-5 shadow-sm left-[30%]"
                   htmlType="submit"
                   icon={<SendOutlined className="align-baseline" />}
                   type="primary"
@@ -123,9 +122,9 @@ const BecomeTeacher = () => {
                 </Button>
               </Form.Item>
             </Form>
-            <div className="border-[1px] border-info w-[48%] mt-7">
+            <div className="w-[48%] mt-7">
               <div className="p-5">
-                <p className="font-semibold pb-4 border-b-[1px] border-info">RULES</p>
+                <p className="font-semibold pb-1 border-b-[1px]">Tutor's Rules</p>
                 <div className="pt-5">
                   <span className="flex flex-row items-start py-2" key={1}>
                     <ExclamationOutlined />

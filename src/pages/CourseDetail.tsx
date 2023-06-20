@@ -9,7 +9,7 @@ import { Button, Form, Modal, Select, Table, Tag, Tooltip } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { CourseStatusDisplay, DEFAULT_AVATAR, MOCK_TEXT } from '../common/constants'
+import { CourseStatusDisplay, DEFAULT_AVATAR, DEFAULT_IMG, MOCK_TEXT } from '../common/constants'
 import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
 import {
   Class,
@@ -59,7 +59,7 @@ const classColumns: ColumnsType<Class> = [
   },
 ]
 
-const CoursesDetail = () => {
+const CourseDetail = () => {
   const { id } = useParams()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -117,8 +117,9 @@ const CoursesDetail = () => {
           <div className="absolute w-1/4 left-2/3 top-0 bg-white border-[1px] border-info">
             <div className="p-2">
               <img
-                src="https://eduma.thimpress.com/wp-content/uploads/2022/12/create-an-lms-website-with-learnpress-3-1.jpg"
-                alt=""
+                src={data?.course?.thumbnail || DEFAULT_IMG}
+                alt="thumbnail"
+                className="object-cover"
               />
               <div className="px-3">
                 <p className="text-xl py-5 font-bold font-sans">
@@ -292,4 +293,4 @@ const CoursesDetail = () => {
   )
 }
 
-export default CoursesDetail
+export default CourseDetail

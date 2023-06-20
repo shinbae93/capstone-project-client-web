@@ -8,6 +8,7 @@ export default {
         primary: '#FFB606',
         gray: '#E8EBED',
         price: 'rgba(255,34,68,0.8)',
+        lighterBlack: '#424242',
       },
       backgroundColor: {
         breadcrumb: '#F3F3F3',
@@ -17,6 +18,7 @@ export default {
         normal: '#584C47',
         footer: '#999999',
         breadcrumb: '#333333',
+        redpink: '#F24C59',
       },
       gridTemplateColumns: {
         'course-item': '270px 1fr',
@@ -27,6 +29,10 @@ export default {
       borderColor: {
         thin: '#eee',
         info: '#cccccc',
+        arrows: '#E8E8E8',
+      },
+      height: {
+        carousel: 'calc(100vh - 120px)',
       },
     },
   },

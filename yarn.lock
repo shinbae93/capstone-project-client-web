@@ -1463,6 +1463,18 @@
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.4.tgz#a04d63f4d1bf5540a41b01a921c9a7fddc3bd1ca"
   integrity sha512-AW8PKd6iX3vAZ0vA43nOUOnbq/X5ihgU+mSXXqunMkeQADGiqw/PY0JNeYtD5sr0PAy51YPgAPbDoeapv9r8WA==
 
+"@stripe/react-stripe-js@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@stripe/react-stripe-js/-/react-stripe-js-2.1.1.tgz#92fe1498bc9db4e0b51d63df3849214cc8021c55"
+  integrity sha512-aHm6cWOqmOyq3eKKlR42hgvrcZhzc9ijL+BeXJ5H3uaWUKKcooSsBys0tiKl0gLxYQHUjUCvrRSX8fYaPBmAKg==
+  dependencies:
+    prop-types "^15.7.2"
+
+"@stripe/stripe-js@^1.54.0":
+  version "1.54.0"
+  resolved "https://registry.yarnpkg.com/@stripe/stripe-js/-/stripe-js-1.54.0.tgz#f92f6b646533776a41bc62b650d2a03f1e282af8"
+  integrity sha512-nElTXkS+nMfDNMkWfLmyeqHQfMGJ1JjrjAVMibV61Oc/rYdUv0cKRYCi1l4ivZ5SySB3vQLcLolxbKBkbNznZA==
+
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@tsconfig/node10/-/node10-1.0.9.tgz#df4907fc07a886922637b15e02d4cebc4c0021b2"

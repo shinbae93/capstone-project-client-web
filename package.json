@@ -13,6 +13,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@apollo/client": "^3.7.15",
+    "@stripe/react-stripe-js": "^2.1.1",
+    "@stripe/stripe-js": "^1.54.0",
     "antd": "^5.4.2",
     "aws-sdk": "^2.1397.0",
     "dayjs": "^1.11.8",

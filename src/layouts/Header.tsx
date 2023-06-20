@@ -1,16 +1,91 @@
 import { SearchOutlined } from '@ant-design/icons'
 import { Avatar, Button, Dropdown, Form, Input } from 'antd'
-import { useState, useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { RoleId } from '../common/constants'
 import { AuthContext } from '../context/auth.context'
 import useAuthenication from '../hooks/useAuthentication'
-import { RoleId } from '../common/constants'
+
+const commonMenu = [
+  {
+    key: '70',
+    label: (
+      <Link to="/profile/general">
+        <p className="px-1 text-sm my-1">Edit profile</p>
+      </Link>
+    ),
+  },
+  {
+    key: '80',
+    label: (
+      <Link to="/profile/change-password">
+        <p className="px-1 text-sm my-1">Change password</p>
+      </Link>
+    ),
+  },
+]
+
+const tutorMenu = [
+  {
+    key: '1',
+    label: (
+      <Link to="/profile/my-courses">
+        <p className="px-1 text-sm my-1">My courses</p>
+      </Link>
+    ),
+  },
+  {
+    key: '2',
+    label: (
+      <Link to="/profile/my-learning">
+        <p className="px-1 text-sm my-1">My learning</p>
+      </Link>
+    ),
+  },
+]
+
+const studentMenu = [
+  {
+    key: '1',
+    label: (
+      <Link to="/profile/my-learning">
+        <p className="px-1 text-sm my-1">My learning</p>
+      </Link>
+    ),
+  },
+  {
+    key: '2',
+    label: (
+      <Link to="/">
+        <p className="px-1 text-sm my-1">Payment history</p>
+      </Link>
+    ),
+  },
+  {
+    key: '3',
+    label: (
+      <Link to="/">
+        <p className="px-1 text-sm my-1">Payment methods</p>
+      </Link>
+    ),
+  },
+  {
+    key: '4',
+    label: (
+      <Link to="/">
+        <p className="px-1 text-sm my-1">Edit profile</p>
+      </Link>
+    ),
+  },
+]
 
 const Header = () => {
   const navigate = useNavigate()
   const [search, setSearch] = useState<string | null>(null)
   const { currentUser } = useContext(AuthContext)
   const { handleLogout } = useAuthenication()
+
+  const isTutor = currentUser?.roleId === RoleId.TUTOR
 
   const handleSearch = () => {
     navigate(`/courses${search ? `?q=${search}` : ''}`)
@@ -39,12 +114,27 @@ const Header = () => {
             </Form.Item>
           </Form>
         </div>
-        {currentUser?.roleId != RoleId.TUTOR && (
-          <span className="px-6 text-base">
-            <Link to="/become-teacher">
-              <p>Become a Teacher</p>
-            </Link>
-          </span>
+        {currentUser?.roleId != RoleId.TUTOR ? (
+          <>
+            <span className="px-6 text-base">
+              <Link to="/become-teacher">
+                <p>Become a Teacher</p>
+              </Link>
+            </span>
+            <span className="pr-2 text-base">
+              <Link to="/profile/my-learning">
+                <p>My learning</p>
+              </Link>
+            </span>
+          </>
+        ) : (
+          <>
+            <span className="pl-6 pr-2 text-base">
+              <Link to="/profile/my-learning">
+                <p>My courses</p>
+              </Link>
+            </span>
+          </>
         )}
         {currentUser ? (
           <Dropdown
@@ -52,40 +142,10 @@ const Header = () => {
             placement="bottom"
             menu={{
               items: [
+                ...(isTutor ? tutorMenu : studentMenu),
+                ...commonMenu,
                 {
-                  key: '1',
-                  label: (
-                    <Link to="/profile/my-learning">
-                      <p className="px-1 text-sm my-1">My learning</p>
-                    </Link>
-                  ),
-                },
-                {
-                  key: '2',
-                  label: (
-                    <Link to="/">
-                      <p className="px-1 text-sm my-1">Payment history</p>
-                    </Link>
-                  ),
-                },
-                {
-                  key: '3',
-                  label: (
-                    <Link to="/">
-                      <p className="px-1 text-sm my-1">Payment methods</p>
-                    </Link>
-                  ),
-                },
-                {
-                  key: '4',
-                  label: (
-                    <Link to="/">
-                      <p className="px-1 text-sm my-1">Edit profile</p>
-                    </Link>
-                  ),
-                },
-                {
-                  key: '5',
+                  key: '99',
                   danger: true,
                   label: <p className="px-1 text-sm my-1">Log out</p>,
                   onClick: handleLogout,
