@@ -6,31 +6,12 @@ import { RoleId } from '../common/constants'
 import { AuthContext } from '../context/auth.context'
 import useAuthenication from '../hooks/useAuthentication'
 
-const commonMenu = [
-  {
-    key: '70',
-    label: (
-      <Link to="/profile/general">
-        <p className="px-1 text-sm my-1">Edit profile</p>
-      </Link>
-    ),
-  },
-  {
-    key: '80',
-    label: (
-      <Link to="/profile/change-password">
-        <p className="px-1 text-sm my-1">Change password</p>
-      </Link>
-    ),
-  },
-]
-
 const tutorMenu = [
   {
     key: '1',
     label: (
       <Link to="/profile/my-courses">
-        <p className="px-1 text-sm my-1">My courses</p>
+        <p className="px-1 font-light text-sm my-1">My courses</p>
       </Link>
     ),
   },
@@ -38,7 +19,7 @@ const tutorMenu = [
     key: '2',
     label: (
       <Link to="/profile/my-learning">
-        <p className="px-1 text-sm my-1">My learning</p>
+        <p className="px-1 font-light text-sm my-1">My learning</p>
       </Link>
     ),
   },
@@ -49,7 +30,7 @@ const studentMenu = [
     key: '1',
     label: (
       <Link to="/profile/my-learning">
-        <p className="px-1 text-sm my-1">My learning</p>
+        <p className="px-1 font-light text-sm my-1">My learning</p>
       </Link>
     ),
   },
@@ -57,7 +38,7 @@ const studentMenu = [
     key: '2',
     label: (
       <Link to="/">
-        <p className="px-1 text-sm my-1">Payment history</p>
+        <p className="px-1 font-light text-sm my-1">Payment history</p>
       </Link>
     ),
   },
@@ -65,15 +46,7 @@ const studentMenu = [
     key: '3',
     label: (
       <Link to="/">
-        <p className="px-1 text-sm my-1">Payment methods</p>
-      </Link>
-    ),
-  },
-  {
-    key: '4',
-    label: (
-      <Link to="/">
-        <p className="px-1 text-sm my-1">Edit profile</p>
+        <p className="px-1 font-light text-sm my-1">Payment methods</p>
       </Link>
     ),
   },
@@ -114,27 +87,31 @@ const Header = () => {
             </Form.Item>
           </Form>
         </div>
-        {currentUser?.roleId != RoleId.TUTOR ? (
-          <>
-            <span className="px-6 text-base">
-              <Link to="/become-teacher">
-                <p>Become a Teacher</p>
-              </Link>
-            </span>
-            <span className="pr-2 text-base">
-              <Link to="/profile/my-learning">
-                <p>My learning</p>
-              </Link>
-            </span>
-          </>
+        {currentUser ? (
+          currentUser?.roleId != RoleId.TUTOR ? (
+            <>
+              <span className="px-6 text-base">
+                <Link to="/become-teacher">
+                  <p>Become a Teacher</p>
+                </Link>
+              </span>
+              <span className="pr-2 text-base">
+                <Link to="/profile/my-learning">
+                  <p>My learning</p>
+                </Link>
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="pl-6 pr-2 text-base">
+                <Link to="/profile/my-courses">
+                  <p>My courses</p>
+                </Link>
+              </span>
+            </>
+          )
         ) : (
-          <>
-            <span className="pl-6 pr-2 text-base">
-              <Link to="/profile/my-learning">
-                <p>My courses</p>
-              </Link>
-            </span>
-          </>
+          <></>
         )}
         {currentUser ? (
           <Dropdown
@@ -142,12 +119,35 @@ const Header = () => {
             placement="bottom"
             menu={{
               items: [
-                ...(isTutor ? tutorMenu : studentMenu),
-                ...commonMenu,
                 {
-                  key: '99',
+                  key: '0',
+                  label: (
+                    <Link to="/profile/my-calendar">
+                      <p className="px-1 font-light text-sm my-1">My calendar</p>
+                    </Link>
+                  ),
+                },
+                ...(isTutor ? tutorMenu : studentMenu),
+                {
+                  key: '70',
+                  label: (
+                    <Link to="/profile/general">
+                      <p className="px-1 font-light text-sm my-1">Edit profile</p>
+                    </Link>
+                  ),
+                },
+                {
+                  key: '80',
+                  label: (
+                    <Link to="/profile/change-password">
+                      <p className="px-1 font-light text-sm my-1">Change password</p>
+                    </Link>
+                  ),
+                },
+                {
+                  key: '90',
                   danger: true,
-                  label: <p className="px-1 text-sm my-1">Log out</p>,
+                  label: <p className="px-1 font-light text-sm my-1">Log out</p>,
                   onClick: handleLogout,
                 },
               ],

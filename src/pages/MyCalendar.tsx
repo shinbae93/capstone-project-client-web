@@ -1,74 +1,73 @@
-import { Badge, BadgeProps, Calendar } from 'antd'
+import { Badge, BadgeProps, Calendar, Popover, Space, Tag } from 'antd'
 import { Dayjs } from 'dayjs'
+import { Calendar as CalendarObject, useGetCalendarQuery } from '../graphql/generated/graphql'
+import { groupBy } from 'lodash'
+import { FC } from 'react'
+import { Link } from 'react-router-dom'
 
-const getListData = (value: Dayjs) => {
-  let listData
-  switch (value.date()) {
-    case 8:
-      listData = [
-        { type: 'warning', content: 'This is warning event.' },
-        { type: 'success', content: 'This is usual event.' },
-      ]
-      break
-    case 10:
-      listData = [
-        { type: 'warning', content: 'This is warning event.' },
-        { type: 'success', content: 'This is usual event.' },
-        { type: 'error', content: 'This is error event.' },
-      ]
-      break
-    case 15:
-      listData = [
-        { type: 'warning', content: 'This is warning event' },
-        { type: 'success', content: 'This is very long usual event。。....' },
-        { type: 'error', content: 'This is error event 1.' },
-        { type: 'error', content: 'This is error event 2.' },
-        { type: 'error', content: 'This is error event 3.' },
-        { type: 'error', content: 'This is error event 4.' },
-      ]
-      break
-    default:
-  }
-  return listData || []
+const BadgeStatus = {
+  ENDED: 'error',
+  IN_PROGRESS: 'processing',
+  UP_COMING: 'warning',
 }
 
-const getMonthData = (value: Dayjs) => {
-  if (value.month() === 8) {
-    return 1394
-  }
+interface PopOverContentProps {
+  calendar: CalendarObject
 }
+
+const PopOverContent: FC<PopOverContentProps> = ({ calendar }) => (
+  <Space direction="vertical">
+    <Tag color={calendar.tutorName ? '#87d068' : '#2db7f5'}>
+      <p className="px-2 py-[2px]">{calendar.tutorName ? 'Student' : 'Tutor'}</p>
+    </Tag>
+    <p>
+      Course: <Link to={`/courses/${calendar.id}`}>{calendar.courseName}</Link>
+    </p>
+    <p>Class: {calendar.className}</p>
+    <p>Method: {calendar.method}</p>
+    <p>
+      Time: {calendar.startTime} - {calendar.endTime}
+    </p>
+    {calendar.tutorName && <p>tutor: {calendar.tutorName}</p>}
+  </Space>
+)
 
 const MyCalendar = () => {
-  const monthCellRender = (value: Dayjs) => {
-    const num = getMonthData(value)
-    return num ? (
-      <div className="notes-month">
-        <section>{num}</section>
-        <span>Backlog number</span>
-      </div>
-    ) : null
-  }
+  const { data: getCalendarQueryResult } = useGetCalendarQuery()
+
+  const data = groupBy(getCalendarQueryResult?.calendars || [], 'date')
 
   const dateCellRender = (value: Dayjs) => {
-    const listData = getListData(value)
-    return (
-      <ul className="events">
+    const listData = data[value.format('YYYY-MM-DD')]
+    return listData?.length ? (
+      <ul>
         {listData.map((item) => (
-          <li key={item.content}>
-            <Badge status={item.type as BadgeProps['status']} text={item.content} />
-          </li>
+          <Popover
+            content={<PopOverContent calendar={item as CalendarObject} />}
+            title={<p className="text-lg">{`${item.courseName} - ${item.className}`}</p>}
+            trigger="click"
+          >
+            <li key={item.id} className="overflow-x-hidden">
+              <Badge
+                status={BadgeStatus[item.status] as BadgeProps['status']}
+                text={`${item.courseName} - ${item.className}`}
+                className="hover:bg-[#dcdfe0] rounded whitespace-nowrap"
+              />
+            </li>
+          </Popover>
         ))}
       </ul>
+    ) : (
+      <></>
     )
   }
 
   const cellRender = (current: Dayjs, info: any) => {
     if (info.type === 'date') return dateCellRender(current)
-    if (info.type === 'month') return monthCellRender(current)
     return info.originNode
   }
 
-  return <Calendar cellRender={cellRender} />
+  return <Calendar cellRender={cellRender} className="w-[70vw] pb-10" />
 }
 
 export default MyCalendar

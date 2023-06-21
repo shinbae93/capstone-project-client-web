@@ -1,0 +1,16 @@
+query getCalendar($queryParams: CalendarQueryParams) {
+  calendars(queryParams: $queryParams) {
+    id
+    courseName
+    className
+    tutorName
+    status
+    method
+    date
+    startTime
+    endTime
+    courseId
+    classId
+    tutorId
+  }
+}

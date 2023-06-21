@@ -1,0 +1,20 @@
+query classes($queryParams: ClassQueryParams!) {
+  classes(queryParams: $queryParams) {
+    id
+    name
+    method
+    schedule {
+      dayOfWeek
+      startTime {
+        hour
+        minute
+      }
+      endTime {
+        hour
+        minute
+      }
+    }
+    occupiedSlots
+    totalSlots
+  }
+}

@@ -44,11 +44,16 @@
   border-color: #e8e8e8;
 }
 
-.ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #ffb606 !important;
 }
 
-.ant-tabs-tab.ant-tabs-tab-active {
+.ant-tabs-tab-btn:hover,
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn:hover {
+  color: #ffb606 !important;
+}
+
+.ant-tabs-ink-bar {
   border-bottom: 2px solid #ffb606 !important;
 }
 

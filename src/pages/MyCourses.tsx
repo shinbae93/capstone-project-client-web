@@ -2,6 +2,7 @@ import {
   CheckOutlined,
   DeleteOutlined,
   EditOutlined,
+  EyeOutlined,
   PlusOutlined,
   SearchOutlined,
   UserOutlined,
@@ -9,12 +10,14 @@ import {
 import { Button, Input, InputRef, Modal, Space, Table, Tag, Tooltip } from 'antd'
 import { ColumnType } from 'antd/es/table'
 import { ColumnsType, FilterConfirmProps } from 'antd/es/table/interface'
+import dayjs from 'dayjs'
 import { useContext, useRef, useState } from 'react'
 import Highlighter from 'react-highlight-words'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { CourseStatusDisplay, DEFAULT_IMG, DEFAULT_LIMIT_ITEMS } from '../common/constants'
 import { AuthContext } from '../context/auth.context'
 import CreateCourseForm from '../features/my-courses/components/CreateCourseForm'
+import UpdateCourseForm from '../features/my-courses/components/UpdateCourseForm'
 import {
   Course,
   CourseStatus,
@@ -28,8 +31,6 @@ import {
 import Loading from '../shared/components/Loading'
 import { CurrencyFormatter } from '../utils/format'
 import { toastCreateSuccess, toastRemoveSuccess, toastUpdateSuccess } from '../utils/toast'
-import UpdateCourseForm from '../features/my-courses/components/UpdateCourseForm'
-import dayjs from 'dayjs'
 
 export interface MyCoursesItemDataType {
   key: React.Key
@@ -64,6 +65,7 @@ const convertMyCoursesItems = (courses: Course[]) => {
 }
 
 const MyCourses = () => {
+  const navigate = useNavigate()
   const { currentUser } = useContext(AuthContext)
 
   const [searchText, setSearchText] = useState('')
@@ -291,21 +293,6 @@ const MyCourses = () => {
       fixed: 'right',
       render: (_, course) => (
         <Space size="middle">
-          <Tooltip title="Edit">
-            <EditOutlined
-              onClick={() => {
-                getCourse({
-                  variables: {
-                    id: String(course.key),
-                  },
-                }).then((res) => {
-                  setSelectedCourse({ ...res.data?.course } as Course)
-                  setOpenUpdateModal(true)
-                })
-              }}
-              className="text-primary"
-            />
-          </Tooltip>
           {!course.isPublished && (
             <>
               <Tooltip title="Publish">
@@ -328,10 +315,22 @@ const MyCourses = () => {
                   className="text-primary"
                 />
               </Tooltip>
-            </>
-          )}
-          {course.isPublished && (
-            <>
+              <Tooltip title="Edit">
+                <EditOutlined
+                  onClick={() => {
+                    getCourse({
+                      variables: {
+                        id: String(course.key),
+                      },
+                      onCompleted: (data) => {
+                        setSelectedCourse({ ...data?.course } as Course)
+                        setOpenUpdateModal(true)
+                      },
+                    })
+                  }}
+                  className="text-primary"
+                />
+              </Tooltip>
               <Tooltip title="Delete">
                 <DeleteOutlined
                   onClick={() =>
@@ -348,6 +347,18 @@ const MyCourses = () => {
                       title: 'Publish Course',
                     })
                   }
+                  className="text-primary"
+                />
+              </Tooltip>
+            </>
+          )}
+          {course.isPublished && (
+            <>
+              <Tooltip title="View">
+                <EyeOutlined
+                  onClick={() => {
+                    navigate(`/courses/${course.key}/manage`)
+                  }}
                   className="text-primary"
                 />
               </Tooltip>

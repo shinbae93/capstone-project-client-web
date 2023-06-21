@@ -57,7 +57,13 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({
       }}
       className="w-2/5"
     >
-      <Form form={form} layout="vertical" name="create_course_form" className="p-4">
+      <Form
+        preserve={false}
+        form={form}
+        layout="vertical"
+        name="create_course_form"
+        className="p-4"
+      >
         <Form.Item
           name="thumbnail"
           label="Thumbnail"

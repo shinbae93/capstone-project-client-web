@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { DEFAULT_LIMIT_ITEMS } from '../../../common/constants.ts'
 import {
   Course,
+  CourseStatus,
   useCoursesQuery,
   useGradesQuery,
   useSubjectsQuery,
@@ -28,8 +29,6 @@ interface FilterCourseDto {
 const CourseList = () => {
   const navigate = useNavigate()
 
-  const [sorting, setSorting] = useState()
-
   const [searchParams] = useSearchParams()
   const q = searchParams.get('q')
 
@@ -47,6 +46,7 @@ const CourseList = () => {
     variables: {
       queryParams: {
         filters: {
+          isPublished: true,
           q,
         },
         pagination: {

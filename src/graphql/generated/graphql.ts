@@ -19,6 +19,42 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type Calendar = {
+  __typename?: 'Calendar';
+  class: Class;
+  classId: Scalars['String']['output'];
+  className: Scalars['String']['output'];
+  course: Course;
+  courseId: Scalars['String']['output'];
+  courseName: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  date: Scalars['Date']['output'];
+  endTime: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  method: ClassMethod;
+  startTime: Scalars['String']['output'];
+  status: CourseStatus;
+  tutor: User;
+  tutorId: Scalars['String']['output'];
+  tutorName: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  user: User;
+  userId: Scalars['String']['output'];
+};
+
+export type CalendarQueryParams = {
+  courseId?: InputMaybe<Scalars['ID']['input']>;
+  endTime?: InputMaybe<Scalars['DateTime']['input']>;
+  pagination?: InputMaybe<PaginateOptions>;
+  sorting?: InputMaybe<Array<SortField>>;
+  startTime?: InputMaybe<Scalars['DateTime']['input']>;
+};
+
+export type ChargeInput = {
+  amount: Scalars['Float']['input'];
+  paymentMethodId: Scalars['String']['input'];
+};
+
 export type Class = {
   __typename?: 'Class';
   course: Course;
@@ -33,10 +69,21 @@ export type Class = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type ClassFilterParams = {
+  courseId?: InputMaybe<Scalars['ID']['input']>;
+  q?: InputMaybe<Scalars['String']['input']>;
+};
+
 export enum ClassMethod {
   Offline = 'OFFLINE',
   Online = 'ONLINE'
 }
+
+export type ClassQueryParams = {
+  filters?: InputMaybe<ClassFilterParams>;
+  pagination?: InputMaybe<PaginateOptions>;
+  sorting?: InputMaybe<Array<SortField>>;
+};
 
 export type Course = {
   __typename?: 'Course';
@@ -66,6 +113,7 @@ export type Course = {
 
 export type CourseFilterParams = {
   gradeIds?: InputMaybe<Array<Scalars['ID']['input']>>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
   q?: InputMaybe<Scalars['String']['input']>;
   statuses?: InputMaybe<Array<CourseStatus>>;
   subjectIds?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -112,11 +160,6 @@ export type CreateCourseInput = {
   thumbnail?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type CreateDocumentInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['input'];
-};
-
 export type CreateEnrolmentInput = {
   classId: Scalars['ID']['input'];
 };
@@ -124,26 +167,6 @@ export type CreateEnrolmentInput = {
 export type CreateGradeInput = {
   name: Scalars['String']['input'];
   subjectIds?: InputMaybe<Array<Scalars['String']['input']>>;
-};
-
-export type CreateLessonCommentInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['input'];
-};
-
-export type CreateLessonInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['input'];
-};
-
-export type CreatePaymentInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['input'];
-};
-
-export type CreateQuizInput = {
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['input'];
 };
 
 export type CreateSubjectInput = {
@@ -165,12 +188,6 @@ export type CreateTutorReviewInput = {
   images?: InputMaybe<Array<Scalars['String']['input']>>;
   rating: Scalars['Float']['input'];
   tutorId: Scalars['String']['input'];
-};
-
-export type Document = {
-  __typename?: 'Document';
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['output'];
 };
 
 export type Enrolment = {
@@ -216,18 +233,6 @@ export type Grade = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type Lesson = {
-  __typename?: 'Lesson';
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['output'];
-};
-
-export type LessonComment = {
-  __typename?: 'LessonComment';
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['output'];
-};
-
 export type LessonTime = {
   __typename?: 'LessonTime';
   /** Values from 0 to 23 */
@@ -256,52 +261,45 @@ export type LoginOutput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  charge: Payment;
   createClass: Class;
   createCourse: Course;
-  createDocument: Document;
   createEnrolment: Enrolment;
   createGrade: Grade;
-  createLesson: Lesson;
-  createLessonComment: LessonComment;
-  createPayment: Payment;
-  createQuiz: Quiz;
   createSubject: Subject;
   createTutorReport: TutorReport;
   createTutorRequest: TutorRequest;
   createTutorReview: TutorReview;
   deleteUser: User;
   login: LoginOutput;
+  loginAdmin: LoginOutput;
   logout: Scalars['Boolean']['output'];
   publishCourse: Course;
   refreshToken: Scalars['String']['output'];
   register: User;
   removeClass: Scalars['Boolean']['output'];
   removeCourse: Scalars['Boolean']['output'];
-  removeDocument: Document;
   removeEnrolment: Scalars['Boolean']['output'];
   removeGrade: Grade;
-  removeLesson: Lesson;
-  removeLessonComment: LessonComment;
   removePayment: Payment;
-  removeQuiz: Quiz;
   removeSubject: Scalars['Boolean']['output'];
   removeTutorReport: TutorReport;
   removeTutorRequest: Scalars['Boolean']['output'];
   removeTutorReview: Scalars['Boolean']['output'];
   updateClass: Class;
   updateCourse: Course;
-  updateDocument: Document;
   updateGrade: Grade;
-  updateLesson: Lesson;
-  updateLessonComment: LessonComment;
-  updatePayment: Payment;
-  updateQuiz: Quiz;
   updateSubject: Subject;
   updateTutorDetail: TutorDetail;
   updateTutorReport: TutorReport;
   updateTutorRequest: TutorRequest;
   updateTutorRequestStatus: TutorRequest;
   updateTutorReview: TutorReview;
+};
+
+
+export type MutationChargeArgs = {
+  chargeInput: ChargeInput;
 };
 
 
@@ -315,11 +313,6 @@ export type MutationCreateCourseArgs = {
 };
 
 
-export type MutationCreateDocumentArgs = {
-  createDocumentInput: CreateDocumentInput;
-};
-
-
 export type MutationCreateEnrolmentArgs = {
   input: CreateEnrolmentInput;
 };
@@ -327,26 +320,6 @@ export type MutationCreateEnrolmentArgs = {
 
 export type MutationCreateGradeArgs = {
   input: CreateGradeInput;
-};
-
-
-export type MutationCreateLessonArgs = {
-  createLessonInput: CreateLessonInput;
-};
-
-
-export type MutationCreateLessonCommentArgs = {
-  createLessonCommentInput: CreateLessonCommentInput;
-};
-
-
-export type MutationCreatePaymentArgs = {
-  createPaymentInput: CreatePaymentInput;
-};
-
-
-export type MutationCreateQuizArgs = {
-  createQuizInput: CreateQuizInput;
 };
 
 
@@ -380,6 +353,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationLoginAdminArgs = {
+  input: LoginInput;
+};
+
+
 export type MutationPublishCourseArgs = {
   id: Scalars['ID']['input'];
 };
@@ -405,11 +383,6 @@ export type MutationRemoveCourseArgs = {
 };
 
 
-export type MutationRemoveDocumentArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
 export type MutationRemoveEnrolmentArgs = {
   id: Scalars['ID']['input'];
 };
@@ -420,22 +393,7 @@ export type MutationRemoveGradeArgs = {
 };
 
 
-export type MutationRemoveLessonArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type MutationRemoveLessonCommentArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
 export type MutationRemovePaymentArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type MutationRemoveQuizArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -470,33 +428,8 @@ export type MutationUpdateCourseArgs = {
 };
 
 
-export type MutationUpdateDocumentArgs = {
-  updateDocumentInput: UpdateDocumentInput;
-};
-
-
 export type MutationUpdateGradeArgs = {
   input: UpdateGradeInput;
-};
-
-
-export type MutationUpdateLessonArgs = {
-  updateLessonInput: UpdateLessonInput;
-};
-
-
-export type MutationUpdateLessonCommentArgs = {
-  updateLessonCommentInput: UpdateLessonCommentInput;
-};
-
-
-export type MutationUpdatePaymentArgs = {
-  updatePaymentInput: UpdatePaymentInput;
-};
-
-
-export type MutationUpdateQuizArgs = {
-  updateQuizInput: UpdateQuizInput;
 };
 
 
@@ -553,11 +486,12 @@ export type Payment = {
 
 export type Query = {
   __typename?: 'Query';
+  calendar: Calendar;
+  calendars: Array<Calendar>;
   class: Class;
   classes: Array<Class>;
   course: Course;
   courses: CoursesPagination;
-  document: Document;
   enrolment: Enrolment;
   enrolments: EnrolmentsPagination;
   getMe: User;
@@ -565,10 +499,8 @@ export type Query = {
   getUsers: Array<User>;
   grade: Grade;
   grades: Array<Grade>;
-  lesson: Lesson;
-  lessonComment: LessonComment;
   payment: Payment;
-  quiz: Quiz;
+  payments: Array<Payment>;
   subject: Subject;
   subjects: Array<Subject>;
   tutorDetail: TutorDetail;
@@ -580,13 +512,23 @@ export type Query = {
 };
 
 
+export type QueryCalendarArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QueryCalendarsArgs = {
+  queryParams?: InputMaybe<CalendarQueryParams>;
+};
+
+
 export type QueryClassArgs = {
   id: Scalars['ID']['input'];
 };
 
 
 export type QueryClassesArgs = {
-  courseId?: InputMaybe<Scalars['ID']['input']>;
+  queryParams: ClassQueryParams;
 };
 
 
@@ -597,11 +539,6 @@ export type QueryCourseArgs = {
 
 export type QueryCoursesArgs = {
   queryParams: CourseQueryParams;
-};
-
-
-export type QueryDocumentArgs = {
-  id: Scalars['Int']['input'];
 };
 
 
@@ -625,22 +562,7 @@ export type QueryGradeArgs = {
 };
 
 
-export type QueryLessonArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type QueryLessonCommentArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
 export type QueryPaymentArgs = {
-  id: Scalars['Int']['input'];
-};
-
-
-export type QueryQuizArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -667,12 +589,6 @@ export type QueryTutorRequestArgs = {
 
 export type QueryTutorReviewArgs = {
   id: Scalars['ID']['input'];
-};
-
-export type Quiz = {
-  __typename?: 'Quiz';
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['output'];
 };
 
 export type RegisterInput = {
@@ -803,40 +719,10 @@ export type UpdateCourseInput = {
   thumbnail?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateDocumentInput = {
-  /** Example field (placeholder) */
-  exampleField?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['Int']['input'];
-};
-
 export type UpdateGradeInput = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   subjectIds?: InputMaybe<Array<Scalars['String']['input']>>;
-};
-
-export type UpdateLessonCommentInput = {
-  /** Example field (placeholder) */
-  exampleField?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['Int']['input'];
-};
-
-export type UpdateLessonInput = {
-  /** Example field (placeholder) */
-  exampleField?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['Int']['input'];
-};
-
-export type UpdatePaymentInput = {
-  /** Example field (placeholder) */
-  exampleField?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['Int']['input'];
-};
-
-export type UpdateQuizInput = {
-  /** Example field (placeholder) */
-  exampleField?: InputMaybe<Scalars['Int']['input']>;
-  id: Scalars['Int']['input'];
 };
 
 export type UpdateSubjectInput = {
@@ -914,6 +800,20 @@ export type RegisterMutationVariables = Exact<{
 
 
 export type RegisterMutation = { __typename?: 'Mutation', register: { __typename?: 'User', id: string } };
+
+export type GetCalendarQueryVariables = Exact<{
+  queryParams?: InputMaybe<CalendarQueryParams>;
+}>;
+
+
+export type GetCalendarQuery = { __typename?: 'Query', calendars: Array<{ __typename?: 'Calendar', id: string, courseName: string, className: string, tutorName: string, status: CourseStatus, method: ClassMethod, date: any, startTime: string, endTime: string, courseId: string, classId: string, tutorId: string }> };
+
+export type ClassesQueryVariables = Exact<{
+  queryParams: ClassQueryParams;
+}>;
+
+
+export type ClassesQuery = { __typename?: 'Query', classes: Array<{ __typename?: 'Class', id: string, name: string, method: ClassMethod, occupiedSlots: number, totalSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: { __typename?: 'LessonTime', hour: number, minute: number }, endTime: { __typename?: 'LessonTime', hour: number, minute: number } }> }> };
 
 export type CreateCourseMutationVariables = Exact<{
   input: CreateCourseInput;
@@ -1122,6 +1022,102 @@ export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<Reg
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const GetCalendarDocument = gql`
+    query getCalendar($queryParams: CalendarQueryParams) {
+  calendars(queryParams: $queryParams) {
+    id
+    courseName
+    className
+    tutorName
+    status
+    method
+    date
+    startTime
+    endTime
+    courseId
+    classId
+    tutorId
+  }
+}
+    `;
+
+/**
+ * __useGetCalendarQuery__
+ *
+ * To run a query within a React component, call `useGetCalendarQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCalendarQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCalendarQuery({
+ *   variables: {
+ *      queryParams: // value for 'queryParams'
+ *   },
+ * });
+ */
+export function useGetCalendarQuery(baseOptions?: Apollo.QueryHookOptions<GetCalendarQuery, GetCalendarQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCalendarQuery, GetCalendarQueryVariables>(GetCalendarDocument, options);
+      }
+export function useGetCalendarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCalendarQuery, GetCalendarQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCalendarQuery, GetCalendarQueryVariables>(GetCalendarDocument, options);
+        }
+export type GetCalendarQueryHookResult = ReturnType<typeof useGetCalendarQuery>;
+export type GetCalendarLazyQueryHookResult = ReturnType<typeof useGetCalendarLazyQuery>;
+export type GetCalendarQueryResult = Apollo.QueryResult<GetCalendarQuery, GetCalendarQueryVariables>;
+export const ClassesDocument = gql`
+    query classes($queryParams: ClassQueryParams!) {
+  classes(queryParams: $queryParams) {
+    id
+    name
+    method
+    schedule {
+      dayOfWeek
+      startTime {
+        hour
+        minute
+      }
+      endTime {
+        hour
+        minute
+      }
+    }
+    occupiedSlots
+    totalSlots
+  }
+}
+    `;
+
+/**
+ * __useClassesQuery__
+ *
+ * To run a query within a React component, call `useClassesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useClassesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useClassesQuery({
+ *   variables: {
+ *      queryParams: // value for 'queryParams'
+ *   },
+ * });
+ */
+export function useClassesQuery(baseOptions: Apollo.QueryHookOptions<ClassesQuery, ClassesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ClassesQuery, ClassesQueryVariables>(ClassesDocument, options);
+      }
+export function useClassesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ClassesQuery, ClassesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ClassesQuery, ClassesQueryVariables>(ClassesDocument, options);
+        }
+export type ClassesQueryHookResult = ReturnType<typeof useClassesQuery>;
+export type ClassesLazyQueryHookResult = ReturnType<typeof useClassesLazyQuery>;
+export type ClassesQueryResult = Apollo.QueryResult<ClassesQuery, ClassesQueryVariables>;
 export const CreateCourseDocument = gql`
     mutation createCourse($input: CreateCourseInput!) {
   createCourse(input: $input) {

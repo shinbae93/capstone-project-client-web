@@ -171,16 +171,22 @@ const CourseDetail = () => {
                     </p>
                   </Tag>
                 </span>
-                <span className="flex justify-center pt-4 pb-2">
-                  <Button
-                    className="bg-primary"
-                    type="primary"
-                    onClick={showModal}
-                    disabled={data?.course?.status == CourseStatus.Ended}
-                  >
-                    <p className="font-medium">Enroll Now</p>
-                  </Button>
-                </span>
+                <Tooltip
+                  title={
+                    data?.course?.status == CourseStatus.Ended ? 'This course is end' : undefined
+                  }
+                >
+                  <span className="flex justify-center pt-4 pb-2">
+                    <Button
+                      className="bg-primary"
+                      type="primary"
+                      onClick={showModal}
+                      disabled={data?.course?.status == CourseStatus.Ended}
+                    >
+                      <p className="font-medium">Enroll Now</p>
+                    </Button>
+                  </span>
+                </Tooltip>
               </div>
             </div>
           </div>

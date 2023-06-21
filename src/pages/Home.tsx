@@ -106,7 +106,7 @@ const Home = () => {
               <Card
                 bordered
                 bodyStyle={{
-                  padding: 0,
+                  padding: '10px',
                 }}
                 cover={
                   <img
@@ -125,7 +125,7 @@ const Home = () => {
                     </Tooltip>
                     <Tooltip title="Fee">
                       <p className="text-redpink font-semibold">
-                        ${CurrencyFormatter.format(item.fee)}
+                        {CurrencyFormatter.format(item.fee)}
                       </p>
                     </Tooltip>
                   </div>,
@@ -140,10 +140,10 @@ const Home = () => {
                     />
                   </span>
                   <div className="mb-5">
-                    <p className="text-sm text-center text-footer mb-2">
+                    <p className="text-base text-center mb-2">
                       {item?.user?.fullName || 'John Doe'}
                     </p>
-                    <p className="text-sm font-medium text-center">Teacher</p>
+                    <p className="text-sm font-medium text-center text-footer">Teacher</p>
                   </div>
                 </div>
               </Card>

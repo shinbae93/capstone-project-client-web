@@ -16,6 +16,9 @@ import AuthLayout from './layouts/AuthLayout'
 import BecomeTeacher from './pages/BecomeTeacher'
 import GeneralProfile from './pages/GeneralProfile'
 import ChangePassword from './pages/ChangePassword'
+import MyCourseDetail from './pages/MyCourseDetail'
+import MyLearningDetail from './pages/MyLearningDetail'
+import MyCalendar from './pages/MyCalendar'
 
 function App() {
   return (
@@ -31,7 +34,10 @@ function App() {
             <Route path="become-teacher" element={<BecomeTeacher />} />
             <Route path="courses" element={<Courses />} />
             <Route path="courses/:id" element={<CourseDetail />} />
+            <Route path="courses/:id/learning" element={<MyLearningDetail />} />
+            <Route path="courses/:id/manage" element={<MyCourseDetail />} />
             <Route path="profile" element={<ProfileLayout />}>
+              <Route path="my-calendar" element={<MyCalendar />} />
               <Route path="my-learning" element={<MyLearning />} />
               <Route path="my-courses" element={<MyCourses />} />
               <Route path="general" element={<GeneralProfile />} />

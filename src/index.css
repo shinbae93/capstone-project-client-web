@@ -20,12 +20,12 @@ p {
 }
 
 ::-webkit-scrollbar {
-  width: 0.6rem;
-  background-color: #111111;
+  width: 0.4rem;
+  height: 0.4rem;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgb(68, 68, 68);
+  background-color: rgb(158, 158, 158);
   border-radius: 0.5rem;
 }
 

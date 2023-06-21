@@ -1,4 +1,10 @@
-import { AuditOutlined, BookOutlined, KeyOutlined, UserOutlined } from '@ant-design/icons'
+import {
+  AuditOutlined,
+  BookOutlined,
+  CalendarOutlined,
+  KeyOutlined,
+  UserOutlined,
+} from '@ant-design/icons'
 import { Layout, Menu, Space } from 'antd'
 import Sider from 'antd/es/layout/Sider'
 import { Content } from 'antd/es/layout/layout'
@@ -23,10 +29,10 @@ const ProfileLayout = () => {
             <Menu
               mode="vertical"
               defaultSelectedKeys={['0']}
-              className="profile-menu"
+              className="profile-menu shadow"
               selectedKeys={[location.pathname.split('/').at(-1) || '']}
             >
-              {/* <Menu.Item
+              <Menu.Item
                 key="my-calendar"
                 icon={<CalendarOutlined className="text-primary mr-1 text-base" />}
                 onClick={() => {
@@ -35,7 +41,7 @@ const ProfileLayout = () => {
                 className="rounded-none profile-menu-item m-0"
               >
                 <p className="inline-block font-light">My calendar</p>
-              </Menu.Item> */}
+              </Menu.Item>
               {currentUser?.roleId === RoleId.TUTOR && (
                 <Menu.Item
                   key="my-courses"
@@ -62,7 +68,7 @@ const ProfileLayout = () => {
                 key="general"
                 icon={<UserOutlined className="text-primary mr-1 text-base" />}
                 onClick={() => {
-                  navigate('/profile/general-information')
+                  navigate('/profile/general')
                 }}
                 className="rounded-none profile-menu-item m-0"
               >
