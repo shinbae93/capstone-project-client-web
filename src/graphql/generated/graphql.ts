@@ -19,6 +19,12 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type Assignment = {
+  __typename?: 'Assignment';
+  /** Example field (placeholder) */
+  exampleField: Scalars['ID']['output'];
+};
+
 export type Calendar = {
   __typename?: 'Calendar';
   class: Class;
@@ -34,9 +40,9 @@ export type Calendar = {
   method: ClassMethod;
   startTime: Scalars['String']['output'];
   status: CourseStatus;
-  tutor: User;
-  tutorId: Scalars['String']['output'];
-  tutorName: Scalars['String']['output'];
+  tutor?: Maybe<User>;
+  tutorId?: Maybe<Scalars['String']['output']>;
+  tutorName?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   user: User;
   userId: Scalars['String']['output'];
@@ -138,6 +144,11 @@ export type CoursesPagination = {
   meta: PaginationMeta;
 };
 
+export type CreateAssignmentInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int']['input'];
+};
+
 export type CreateClassInput = {
   courseId: Scalars['String']['input'];
   method: ClassMethod;
@@ -169,6 +180,11 @@ export type CreateGradeInput = {
   subjectIds?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type CreateQuizInput = {
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int']['input'];
+};
+
 export type CreateSubjectInput = {
   gradeIds?: InputMaybe<Array<Scalars['String']['input']>>;
   name: Scalars['String']['input'];
@@ -196,6 +212,7 @@ export type Enrolment = {
   classId: Scalars['ID']['output'];
   course: Course;
   courseId: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
   id: Scalars['ID']['output'];
   isFinished: Scalars['Boolean']['output'];
   user: User;
@@ -203,6 +220,8 @@ export type Enrolment = {
 };
 
 export type EnrolmentFilterParams = {
+  classId?: InputMaybe<Scalars['ID']['input']>;
+  courseId?: InputMaybe<Scalars['ID']['input']>;
   q?: InputMaybe<Scalars['String']['input']>;
   statuses?: InputMaybe<Array<CourseStatus>>;
 };
@@ -233,21 +252,6 @@ export type Grade = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
-export type LessonTime = {
-  __typename?: 'LessonTime';
-  /** Values from 0 to 23 */
-  hour: Scalars['Float']['output'];
-  /** Values from 0 to 59 */
-  minute: Scalars['Float']['output'];
-};
-
-export type LessonTimeInput = {
-  /** Values from 0 to 23 */
-  hour: Scalars['Float']['input'];
-  /** Values from 0 to 59 */
-  minute: Scalars['Float']['input'];
-};
-
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -262,10 +266,12 @@ export type LoginOutput = {
 export type Mutation = {
   __typename?: 'Mutation';
   charge: Payment;
+  createAssignment: Assignment;
   createClass: Class;
   createCourse: Course;
   createEnrolment: Enrolment;
   createGrade: Grade;
+  createQuiz: Quiz;
   createSubject: Subject;
   createTutorReport: TutorReport;
   createTutorRequest: TutorRequest;
@@ -277,18 +283,22 @@ export type Mutation = {
   publishCourse: Course;
   refreshToken: Scalars['String']['output'];
   register: User;
+  removeAssignment: Assignment;
   removeClass: Scalars['Boolean']['output'];
   removeCourse: Scalars['Boolean']['output'];
   removeEnrolment: Scalars['Boolean']['output'];
   removeGrade: Grade;
   removePayment: Payment;
+  removeQuiz: Quiz;
   removeSubject: Scalars['Boolean']['output'];
   removeTutorReport: TutorReport;
   removeTutorRequest: Scalars['Boolean']['output'];
   removeTutorReview: Scalars['Boolean']['output'];
+  updateAssignment: Assignment;
   updateClass: Class;
   updateCourse: Course;
   updateGrade: Grade;
+  updateQuiz: Quiz;
   updateSubject: Subject;
   updateTutorDetail: TutorDetail;
   updateTutorReport: TutorReport;
@@ -300,6 +310,11 @@ export type Mutation = {
 
 export type MutationChargeArgs = {
   chargeInput: ChargeInput;
+};
+
+
+export type MutationCreateAssignmentArgs = {
+  createAssignmentInput: CreateAssignmentInput;
 };
 
 
@@ -320,6 +335,11 @@ export type MutationCreateEnrolmentArgs = {
 
 export type MutationCreateGradeArgs = {
   input: CreateGradeInput;
+};
+
+
+export type MutationCreateQuizArgs = {
+  createQuizInput: CreateQuizInput;
 };
 
 
@@ -373,6 +393,11 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationRemoveAssignmentArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
 export type MutationRemoveClassArgs = {
   id: Scalars['ID']['input'];
 };
@@ -398,6 +423,11 @@ export type MutationRemovePaymentArgs = {
 };
 
 
+export type MutationRemoveQuizArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
 export type MutationRemoveSubjectArgs = {
   id: Scalars['ID']['input'];
 };
@@ -418,6 +448,11 @@ export type MutationRemoveTutorReviewArgs = {
 };
 
 
+export type MutationUpdateAssignmentArgs = {
+  updateAssignmentInput: UpdateAssignmentInput;
+};
+
+
 export type MutationUpdateClassArgs = {
   input: UpdateClassInput;
 };
@@ -430,6 +465,11 @@ export type MutationUpdateCourseArgs = {
 
 export type MutationUpdateGradeArgs = {
   input: UpdateGradeInput;
+};
+
+
+export type MutationUpdateQuizArgs = {
+  updateQuizInput: UpdateQuizInput;
 };
 
 
@@ -480,27 +520,35 @@ export type PaginationMeta = {
 
 export type Payment = {
   __typename?: 'Payment';
-  /** Example field (placeholder) */
-  exampleField: Scalars['Int']['output'];
+  amount: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  isPaid: Scalars['Boolean']['output'];
+  name: Scalars['String']['output'];
+  paidAt: Scalars['DateTime']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
+  assignment: Assignment;
   calendar: Calendar;
   calendars: Array<Calendar>;
-  class: Class;
   classes: Array<Class>;
   course: Course;
   courses: CoursesPagination;
   enrolment: Enrolment;
   enrolments: EnrolmentsPagination;
+  getClass: Class;
   getMe: User;
   getUser: User;
   getUsers: Array<User>;
   grade: Grade;
   grades: Array<Grade>;
+  isEnrolled: Scalars['Boolean']['output'];
+  myCalendars: Array<Calendar>;
+  myEnrolments: EnrolmentsPagination;
   payment: Payment;
   payments: Array<Payment>;
+  quiz: Quiz;
   subject: Subject;
   subjects: Array<Subject>;
   tutorDetail: TutorDetail;
@@ -512,6 +560,11 @@ export type Query = {
 };
 
 
+export type QueryAssignmentArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
 export type QueryCalendarArgs = {
   id: Scalars['ID']['input'];
 };
@@ -519,11 +572,6 @@ export type QueryCalendarArgs = {
 
 export type QueryCalendarsArgs = {
   queryParams?: InputMaybe<CalendarQueryParams>;
-};
-
-
-export type QueryClassArgs = {
-  id: Scalars['ID']['input'];
 };
 
 
@@ -552,6 +600,11 @@ export type QueryEnrolmentsArgs = {
 };
 
 
+export type QueryGetClassArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
 export type QueryGetUserArgs = {
   id: Scalars['ID']['input'];
 };
@@ -562,7 +615,27 @@ export type QueryGradeArgs = {
 };
 
 
+export type QueryIsEnrolledArgs = {
+  courseId: Scalars['ID']['input'];
+};
+
+
+export type QueryMyCalendarsArgs = {
+  queryParams?: InputMaybe<CalendarQueryParams>;
+};
+
+
+export type QueryMyEnrolmentsArgs = {
+  queryParams?: InputMaybe<EnrolmentQueryParams>;
+};
+
+
 export type QueryPaymentArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryQuizArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -591,6 +664,12 @@ export type QueryTutorReviewArgs = {
   id: Scalars['ID']['input'];
 };
 
+export type Quiz = {
+  __typename?: 'Quiz';
+  /** Example field (placeholder) */
+  exampleField: Scalars['Int']['output'];
+};
+
 export type RegisterInput = {
   avatar?: InputMaybe<Scalars['String']['input']>;
   birthday: Scalars['DateTime']['input'];
@@ -614,15 +693,15 @@ export type ScheduleTime = {
   __typename?: 'ScheduleTime';
   /** Values from 0 to 6 equivalent to Sunday to Saturday */
   dayOfWeek: Scalars['Float']['output'];
-  endTime: LessonTime;
-  startTime: LessonTime;
+  endTime: Scalars['String']['output'];
+  startTime: Scalars['String']['output'];
 };
 
 export type ScheduleTimeInput = {
   /** Values from 0 to 6 equivalent to Sunday to Saturday */
   dayOfWeek: Scalars['Float']['input'];
-  endTime: LessonTimeInput;
-  startTime: LessonTimeInput;
+  endTime: Scalars['String']['input'];
+  startTime: Scalars['String']['input'];
 };
 
 export enum SortDirection {
@@ -697,6 +776,12 @@ export type TutorReview = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type UpdateAssignmentInput = {
+  /** Example field (placeholder) */
+  exampleField?: InputMaybe<Scalars['Int']['input']>;
+  id: Scalars['Int']['input'];
+};
+
 export type UpdateClassInput = {
   id: Scalars['ID']['input'];
   method?: InputMaybe<ClassMethod>;
@@ -723,6 +808,12 @@ export type UpdateGradeInput = {
   id: Scalars['ID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   subjectIds?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type UpdateQuizInput = {
+  /** Example field (placeholder) */
+  exampleField?: InputMaybe<Scalars['Int']['input']>;
+  id: Scalars['Int']['input'];
 };
 
 export type UpdateSubjectInput = {
@@ -806,14 +897,49 @@ export type GetCalendarQueryVariables = Exact<{
 }>;
 
 
-export type GetCalendarQuery = { __typename?: 'Query', calendars: Array<{ __typename?: 'Calendar', id: string, courseName: string, className: string, tutorName: string, status: CourseStatus, method: ClassMethod, date: any, startTime: string, endTime: string, courseId: string, classId: string, tutorId: string }> };
+export type GetCalendarQuery = { __typename?: 'Query', calendars: Array<{ __typename?: 'Calendar', id: string, courseName: string, className: string, tutorName?: string | null, status: CourseStatus, method: ClassMethod, date: any, startTime: string, endTime: string, courseId: string, classId: string, tutorId?: string | null }> };
+
+export type GetMyCalendarQueryVariables = Exact<{
+  queryParams?: InputMaybe<CalendarQueryParams>;
+}>;
+
+
+export type GetMyCalendarQuery = { __typename?: 'Query', myCalendars: Array<{ __typename?: 'Calendar', id: string, courseName: string, className: string, tutorName?: string | null, status: CourseStatus, method: ClassMethod, date: any, startTime: string, endTime: string, courseId: string, classId: string, tutorId?: string | null }> };
+
+export type CreateClassMutationVariables = Exact<{
+  input: CreateClassInput;
+}>;
+
+
+export type CreateClassMutation = { __typename?: 'Mutation', createClass: { __typename?: 'Class', id: string } };
+
+export type GetClassQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type GetClassQuery = { __typename?: 'Query', getClass: { __typename?: 'Class', id: string, name: string, method: ClassMethod, totalSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: string, endTime: string }> } };
 
 export type ClassesQueryVariables = Exact<{
   queryParams: ClassQueryParams;
 }>;
 
 
-export type ClassesQuery = { __typename?: 'Query', classes: Array<{ __typename?: 'Class', id: string, name: string, method: ClassMethod, occupiedSlots: number, totalSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: { __typename?: 'LessonTime', hour: number, minute: number }, endTime: { __typename?: 'LessonTime', hour: number, minute: number } }> }> };
+export type ClassesQuery = { __typename?: 'Query', classes: Array<{ __typename?: 'Class', id: string, name: string, method: ClassMethod, occupiedSlots: number, totalSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: string, endTime: string }> }> };
+
+export type RemoveClassMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RemoveClassMutation = { __typename?: 'Mutation', removeClass: boolean };
+
+export type UpdateClassMutationVariables = Exact<{
+  input: UpdateClassInput;
+}>;
+
+
+export type UpdateClassMutation = { __typename?: 'Mutation', updateClass: { __typename?: 'Class', id: string } };
 
 export type CreateCourseMutationVariables = Exact<{
   input: CreateCourseInput;
@@ -827,7 +953,7 @@ export type CourseQueryVariables = Exact<{
 }>;
 
 
-export type CourseQuery = { __typename?: 'Query', course: { __typename?: 'Course', id: string, name: string, thumbnail?: string | null, description?: string | null, objectives?: Array<string> | null, fee: number, isPublished: boolean, status: CourseStatus, paymentDate?: number | null, startDate: any, endDate: any, duration: number, userId: string, gradeId: string, subjectId: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, avatar?: string | null, fullName: string, tutorDetail: { __typename?: 'TutorDetail', headline?: string | null, biography?: string | null } }, grade: { __typename?: 'Grade', id: string, name: string }, subject: { __typename?: 'Subject', id: string, name: string }, classes?: Array<{ __typename?: 'Class', id: string, name: string, method: ClassMethod, totalSlots: number, occupiedSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: { __typename?: 'LessonTime', hour: number, minute: number }, endTime: { __typename?: 'LessonTime', hour: number, minute: number } }> }> | null } };
+export type CourseQuery = { __typename?: 'Query', course: { __typename?: 'Course', id: string, name: string, thumbnail?: string | null, description?: string | null, objectives?: Array<string> | null, fee: number, isPublished: boolean, status: CourseStatus, paymentDate?: number | null, startDate: any, endDate: any, duration: number, userId: string, gradeId: string, subjectId: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, avatar?: string | null, fullName: string, tutorDetail: { __typename?: 'TutorDetail', headline?: string | null, biography?: string | null } }, grade: { __typename?: 'Grade', id: string, name: string }, subject: { __typename?: 'Subject', id: string, name: string }, classes?: Array<{ __typename?: 'Class', id: string, name: string, method: ClassMethod, totalSlots: number, occupiedSlots: number, schedule: Array<{ __typename?: 'ScheduleTime', dayOfWeek: number, startTime: string, endTime: string }> }> | null } };
 
 export type CoursesQueryVariables = Exact<{
   queryParams: CourseQueryParams;
@@ -864,12 +990,26 @@ export type CreateEnrolmentMutationVariables = Exact<{
 
 export type CreateEnrolmentMutation = { __typename?: 'Mutation', createEnrolment: { __typename?: 'Enrolment', id: string, isFinished: boolean } };
 
-export type EnrolmentsQueryVariables = Exact<{
+export type GetMyEnrolmentsQueryVariables = Exact<{
   queryParams?: InputMaybe<EnrolmentQueryParams>;
 }>;
 
 
-export type EnrolmentsQuery = { __typename?: 'Query', enrolments: { __typename?: 'EnrolmentsPagination', meta: { __typename?: 'PaginationMeta', itemCount: number, totalItems: number, itemsPerPage: number, totalPages: number, currentPage: number }, items: Array<{ __typename?: 'Enrolment', id: string, isFinished: boolean, course: { __typename?: 'Course', id: string, name: string, status: CourseStatus, thumbnail?: string | null, fee: number, startDate: any, endDate: any, user: { __typename?: 'User', id: string, fullName: string } } }> } };
+export type GetMyEnrolmentsQuery = { __typename?: 'Query', myEnrolments: { __typename?: 'EnrolmentsPagination', meta: { __typename?: 'PaginationMeta', itemCount: number, totalItems: number, itemsPerPage: number, totalPages: number, currentPage: number }, items: Array<{ __typename?: 'Enrolment', id: string, isFinished: boolean, course: { __typename?: 'Course', id: string, name: string, status: CourseStatus, thumbnail?: string | null, fee: number, startDate: any, endDate: any, user: { __typename?: 'User', id: string, avatar?: string | null, fullName: string, email: string, phoneNumber: string, gender: number, birthday: any } } }> } };
+
+export type StudentEnrolmentsQueryVariables = Exact<{
+  queryParams?: InputMaybe<EnrolmentQueryParams>;
+}>;
+
+
+export type StudentEnrolmentsQuery = { __typename?: 'Query', enrolments: { __typename?: 'EnrolmentsPagination', meta: { __typename?: 'PaginationMeta', itemCount: number, totalItems: number, itemsPerPage: number, totalPages: number, currentPage: number }, items: Array<{ __typename?: 'Enrolment', id: string, isFinished: boolean, createdAt: any, user: { __typename?: 'User', id: string, fullName: string, email: string, avatar?: string | null, gender: number, birthday: any, phoneNumber: string } }> } };
+
+export type IsEnrolledQueryVariables = Exact<{
+  courseId: Scalars['ID']['input'];
+}>;
+
+
+export type IsEnrolledQuery = { __typename?: 'Query', isEnrolled: boolean };
 
 export type GradesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1068,6 +1208,128 @@ export function useGetCalendarLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type GetCalendarQueryHookResult = ReturnType<typeof useGetCalendarQuery>;
 export type GetCalendarLazyQueryHookResult = ReturnType<typeof useGetCalendarLazyQuery>;
 export type GetCalendarQueryResult = Apollo.QueryResult<GetCalendarQuery, GetCalendarQueryVariables>;
+export const GetMyCalendarDocument = gql`
+    query getMyCalendar($queryParams: CalendarQueryParams) {
+  myCalendars(queryParams: $queryParams) {
+    id
+    courseName
+    className
+    tutorName
+    status
+    method
+    date
+    startTime
+    endTime
+    courseId
+    classId
+    tutorId
+  }
+}
+    `;
+
+/**
+ * __useGetMyCalendarQuery__
+ *
+ * To run a query within a React component, call `useGetMyCalendarQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyCalendarQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMyCalendarQuery({
+ *   variables: {
+ *      queryParams: // value for 'queryParams'
+ *   },
+ * });
+ */
+export function useGetMyCalendarQuery(baseOptions?: Apollo.QueryHookOptions<GetMyCalendarQuery, GetMyCalendarQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMyCalendarQuery, GetMyCalendarQueryVariables>(GetMyCalendarDocument, options);
+      }
+export function useGetMyCalendarLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyCalendarQuery, GetMyCalendarQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMyCalendarQuery, GetMyCalendarQueryVariables>(GetMyCalendarDocument, options);
+        }
+export type GetMyCalendarQueryHookResult = ReturnType<typeof useGetMyCalendarQuery>;
+export type GetMyCalendarLazyQueryHookResult = ReturnType<typeof useGetMyCalendarLazyQuery>;
+export type GetMyCalendarQueryResult = Apollo.QueryResult<GetMyCalendarQuery, GetMyCalendarQueryVariables>;
+export const CreateClassDocument = gql`
+    mutation createClass($input: CreateClassInput!) {
+  createClass(input: $input) {
+    id
+  }
+}
+    `;
+export type CreateClassMutationFn = Apollo.MutationFunction<CreateClassMutation, CreateClassMutationVariables>;
+
+/**
+ * __useCreateClassMutation__
+ *
+ * To run a mutation, you first call `useCreateClassMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateClassMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createClassMutation, { data, loading, error }] = useCreateClassMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useCreateClassMutation(baseOptions?: Apollo.MutationHookOptions<CreateClassMutation, CreateClassMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateClassMutation, CreateClassMutationVariables>(CreateClassDocument, options);
+      }
+export type CreateClassMutationHookResult = ReturnType<typeof useCreateClassMutation>;
+export type CreateClassMutationResult = Apollo.MutationResult<CreateClassMutation>;
+export type CreateClassMutationOptions = Apollo.BaseMutationOptions<CreateClassMutation, CreateClassMutationVariables>;
+export const GetClassDocument = gql`
+    query getClass($id: ID!) {
+  getClass(id: $id) {
+    id
+    name
+    method
+    schedule {
+      dayOfWeek
+      startTime
+      endTime
+    }
+    totalSlots
+  }
+}
+    `;
+
+/**
+ * __useGetClassQuery__
+ *
+ * To run a query within a React component, call `useGetClassQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetClassQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetClassQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetClassQuery(baseOptions: Apollo.QueryHookOptions<GetClassQuery, GetClassQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetClassQuery, GetClassQueryVariables>(GetClassDocument, options);
+      }
+export function useGetClassLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetClassQuery, GetClassQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetClassQuery, GetClassQueryVariables>(GetClassDocument, options);
+        }
+export type GetClassQueryHookResult = ReturnType<typeof useGetClassQuery>;
+export type GetClassLazyQueryHookResult = ReturnType<typeof useGetClassLazyQuery>;
+export type GetClassQueryResult = Apollo.QueryResult<GetClassQuery, GetClassQueryVariables>;
 export const ClassesDocument = gql`
     query classes($queryParams: ClassQueryParams!) {
   classes(queryParams: $queryParams) {
@@ -1076,14 +1338,8 @@ export const ClassesDocument = gql`
     method
     schedule {
       dayOfWeek
-      startTime {
-        hour
-        minute
-      }
-      endTime {
-        hour
-        minute
-      }
+      startTime
+      endTime
     }
     occupiedSlots
     totalSlots
@@ -1118,6 +1374,70 @@ export function useClassesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Cl
 export type ClassesQueryHookResult = ReturnType<typeof useClassesQuery>;
 export type ClassesLazyQueryHookResult = ReturnType<typeof useClassesLazyQuery>;
 export type ClassesQueryResult = Apollo.QueryResult<ClassesQuery, ClassesQueryVariables>;
+export const RemoveClassDocument = gql`
+    mutation removeClass($id: ID!) {
+  removeClass(id: $id)
+}
+    `;
+export type RemoveClassMutationFn = Apollo.MutationFunction<RemoveClassMutation, RemoveClassMutationVariables>;
+
+/**
+ * __useRemoveClassMutation__
+ *
+ * To run a mutation, you first call `useRemoveClassMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveClassMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeClassMutation, { data, loading, error }] = useRemoveClassMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveClassMutation(baseOptions?: Apollo.MutationHookOptions<RemoveClassMutation, RemoveClassMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveClassMutation, RemoveClassMutationVariables>(RemoveClassDocument, options);
+      }
+export type RemoveClassMutationHookResult = ReturnType<typeof useRemoveClassMutation>;
+export type RemoveClassMutationResult = Apollo.MutationResult<RemoveClassMutation>;
+export type RemoveClassMutationOptions = Apollo.BaseMutationOptions<RemoveClassMutation, RemoveClassMutationVariables>;
+export const UpdateClassDocument = gql`
+    mutation updateClass($input: UpdateClassInput!) {
+  updateClass(input: $input) {
+    id
+  }
+}
+    `;
+export type UpdateClassMutationFn = Apollo.MutationFunction<UpdateClassMutation, UpdateClassMutationVariables>;
+
+/**
+ * __useUpdateClassMutation__
+ *
+ * To run a mutation, you first call `useUpdateClassMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateClassMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateClassMutation, { data, loading, error }] = useUpdateClassMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateClassMutation(baseOptions?: Apollo.MutationHookOptions<UpdateClassMutation, UpdateClassMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateClassMutation, UpdateClassMutationVariables>(UpdateClassDocument, options);
+      }
+export type UpdateClassMutationHookResult = ReturnType<typeof useUpdateClassMutation>;
+export type UpdateClassMutationResult = Apollo.MutationResult<UpdateClassMutation>;
+export type UpdateClassMutationOptions = Apollo.BaseMutationOptions<UpdateClassMutation, UpdateClassMutationVariables>;
 export const CreateCourseDocument = gql`
     mutation createCourse($input: CreateCourseInput!) {
   createCourse(input: $input) {
@@ -1229,14 +1549,8 @@ export const CourseDocument = gql`
       method
       schedule {
         dayOfWeek
-        startTime {
-          hour
-          minute
-        }
-        endTime {
-          hour
-          minute
-        }
+        startTime
+        endTime
       }
       totalSlots
       occupiedSlots
@@ -1473,9 +1787,9 @@ export function useCreateEnrolmentMutation(baseOptions?: Apollo.MutationHookOpti
 export type CreateEnrolmentMutationHookResult = ReturnType<typeof useCreateEnrolmentMutation>;
 export type CreateEnrolmentMutationResult = Apollo.MutationResult<CreateEnrolmentMutation>;
 export type CreateEnrolmentMutationOptions = Apollo.BaseMutationOptions<CreateEnrolmentMutation, CreateEnrolmentMutationVariables>;
-export const EnrolmentsDocument = gql`
-    query enrolments($queryParams: EnrolmentQueryParams) {
-  enrolments(queryParams: $queryParams) {
+export const GetMyEnrolmentsDocument = gql`
+    query getMyEnrolments($queryParams: EnrolmentQueryParams) {
+  myEnrolments(queryParams: $queryParams) {
     meta {
       itemCount
       totalItems
@@ -1496,7 +1810,12 @@ export const EnrolmentsDocument = gql`
         endDate
         user {
           id
+          avatar
           fullName
+          email
+          phoneNumber
+          gender
+          birthday
         }
       }
     }
@@ -1505,32 +1824,120 @@ export const EnrolmentsDocument = gql`
     `;
 
 /**
- * __useEnrolmentsQuery__
+ * __useGetMyEnrolmentsQuery__
  *
- * To run a query within a React component, call `useEnrolmentsQuery` and pass it any options that fit your needs.
- * When your component renders, `useEnrolmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetMyEnrolmentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMyEnrolmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useEnrolmentsQuery({
+ * const { data, loading, error } = useGetMyEnrolmentsQuery({
  *   variables: {
  *      queryParams: // value for 'queryParams'
  *   },
  * });
  */
-export function useEnrolmentsQuery(baseOptions?: Apollo.QueryHookOptions<EnrolmentsQuery, EnrolmentsQueryVariables>) {
+export function useGetMyEnrolmentsQuery(baseOptions?: Apollo.QueryHookOptions<GetMyEnrolmentsQuery, GetMyEnrolmentsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<EnrolmentsQuery, EnrolmentsQueryVariables>(EnrolmentsDocument, options);
+        return Apollo.useQuery<GetMyEnrolmentsQuery, GetMyEnrolmentsQueryVariables>(GetMyEnrolmentsDocument, options);
       }
-export function useEnrolmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<EnrolmentsQuery, EnrolmentsQueryVariables>) {
+export function useGetMyEnrolmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMyEnrolmentsQuery, GetMyEnrolmentsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<EnrolmentsQuery, EnrolmentsQueryVariables>(EnrolmentsDocument, options);
+          return Apollo.useLazyQuery<GetMyEnrolmentsQuery, GetMyEnrolmentsQueryVariables>(GetMyEnrolmentsDocument, options);
         }
-export type EnrolmentsQueryHookResult = ReturnType<typeof useEnrolmentsQuery>;
-export type EnrolmentsLazyQueryHookResult = ReturnType<typeof useEnrolmentsLazyQuery>;
-export type EnrolmentsQueryResult = Apollo.QueryResult<EnrolmentsQuery, EnrolmentsQueryVariables>;
+export type GetMyEnrolmentsQueryHookResult = ReturnType<typeof useGetMyEnrolmentsQuery>;
+export type GetMyEnrolmentsLazyQueryHookResult = ReturnType<typeof useGetMyEnrolmentsLazyQuery>;
+export type GetMyEnrolmentsQueryResult = Apollo.QueryResult<GetMyEnrolmentsQuery, GetMyEnrolmentsQueryVariables>;
+export const StudentEnrolmentsDocument = gql`
+    query studentEnrolments($queryParams: EnrolmentQueryParams) {
+  enrolments(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      isFinished
+      createdAt
+      user {
+        id
+        fullName
+        email
+        avatar
+        gender
+        birthday
+        phoneNumber
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useStudentEnrolmentsQuery__
+ *
+ * To run a query within a React component, call `useStudentEnrolmentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useStudentEnrolmentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStudentEnrolmentsQuery({
+ *   variables: {
+ *      queryParams: // value for 'queryParams'
+ *   },
+ * });
+ */
+export function useStudentEnrolmentsQuery(baseOptions?: Apollo.QueryHookOptions<StudentEnrolmentsQuery, StudentEnrolmentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<StudentEnrolmentsQuery, StudentEnrolmentsQueryVariables>(StudentEnrolmentsDocument, options);
+      }
+export function useStudentEnrolmentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<StudentEnrolmentsQuery, StudentEnrolmentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<StudentEnrolmentsQuery, StudentEnrolmentsQueryVariables>(StudentEnrolmentsDocument, options);
+        }
+export type StudentEnrolmentsQueryHookResult = ReturnType<typeof useStudentEnrolmentsQuery>;
+export type StudentEnrolmentsLazyQueryHookResult = ReturnType<typeof useStudentEnrolmentsLazyQuery>;
+export type StudentEnrolmentsQueryResult = Apollo.QueryResult<StudentEnrolmentsQuery, StudentEnrolmentsQueryVariables>;
+export const IsEnrolledDocument = gql`
+    query isEnrolled($courseId: ID!) {
+  isEnrolled(courseId: $courseId)
+}
+    `;
+
+/**
+ * __useIsEnrolledQuery__
+ *
+ * To run a query within a React component, call `useIsEnrolledQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsEnrolledQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsEnrolledQuery({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *   },
+ * });
+ */
+export function useIsEnrolledQuery(baseOptions: Apollo.QueryHookOptions<IsEnrolledQuery, IsEnrolledQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<IsEnrolledQuery, IsEnrolledQueryVariables>(IsEnrolledDocument, options);
+      }
+export function useIsEnrolledLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<IsEnrolledQuery, IsEnrolledQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<IsEnrolledQuery, IsEnrolledQueryVariables>(IsEnrolledDocument, options);
+        }
+export type IsEnrolledQueryHookResult = ReturnType<typeof useIsEnrolledQuery>;
+export type IsEnrolledLazyQueryHookResult = ReturnType<typeof useIsEnrolledLazyQuery>;
+export type IsEnrolledQueryResult = Apollo.QueryResult<IsEnrolledQuery, IsEnrolledQueryVariables>;
 export const GradesDocument = gql`
     query grades {
   grades {

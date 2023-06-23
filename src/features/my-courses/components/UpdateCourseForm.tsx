@@ -9,10 +9,11 @@ import {
   useUpdateCourseMutation,
 } from '../../../graphql/generated/graphql'
 import UploadInput from '../../../shared/components/UploadInput'
+import { DeepPartial } from '../../../utils/type'
+import { useEffect } from 'react'
 
 interface CreateCourseFormProps {
-  course: Partial<Course> | undefined
-  open: boolean
+  course: DeepPartial<Course> | undefined
   onUpdate: () => void
   onCancel: () => void
 }
@@ -21,21 +22,22 @@ const getDateInput = (e: dayjs.Dayjs) => e.toDate()
 
 const getFile = (e: UploadChangeParam<UploadFile>) => e && e.fileList && e.fileList[0].url
 
-const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({
-  course,
-  open,
-  onUpdate,
-  onCancel,
-}) => {
+const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({ course, onUpdate, onCancel }) => {
   const [form] = Form.useForm()
 
   const { data: gradesQueryResult } = useGradesQuery()
   const { data: subjectsQueryResult } = useSubjectsQuery()
   const [updateCourse] = useUpdateCourseMutation()
 
+  useEffect(() => {
+    setTimeout(() => {
+      form.resetFields()
+    })
+  }, [course, form])
+
   return (
     <Modal
-      open={open}
+      open={!!course}
       title="Update course"
       okText="Update"
       cancelText="Cancel"
@@ -51,8 +53,8 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({
             variables: {
               input: { id: String(course?.id), ...values },
             },
+            onCompleted: () => onUpdate(),
           })
-          onUpdate()
         })
       }}
       className="w-2/5"
@@ -73,7 +75,6 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({
         >
           <UploadInput form={form} />
         </Form.Item>
-
         <Form.Item
           name="name"
           label="Name"
@@ -82,7 +83,6 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({
         >
           <Input placeholder="Name" />
         </Form.Item>
-
         <Form.Item
           name="description"
           label="Description"
@@ -91,7 +91,6 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({
         >
           <Input.TextArea placeholder="Description" />
         </Form.Item>
-
         <Form.Item
           messageVariables={{ name: 'Grade' }}
           label="Grade"

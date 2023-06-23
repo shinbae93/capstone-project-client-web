@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import {
   LoginInput,
-  User,
   useLoginMutation,
   useLogoutMutation,
   useRefreshTokenMutation,
@@ -57,8 +56,8 @@ const useAuthenication = () => {
       onCompleted: () => {
         clearToken()
         clearRefreshToken()
-        setCurrentUser({} as User)
-        navigate('/login')
+        setCurrentUser(null)
+        navigate('/auth/login')
       },
     })
   }

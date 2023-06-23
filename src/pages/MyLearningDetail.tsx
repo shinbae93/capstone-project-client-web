@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
 import { DEFAULT_AVATAR } from '../common/constants'
-import { Class, useCourseQuery } from '../graphql/generated/graphql'
+import { useCourseQuery } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
 import { Tabs } from 'antd'
 import ClassList from '../features/my-course-detail/components/ClassList'
@@ -22,13 +22,13 @@ const MyLearningDetail = () => {
       {/** Breadcrumb */}
       <CourseDetailBreadcrumb id={data?.course?.id || ''} name={data?.course?.name || ''} />
       {/** Header of course */}
-      <div className="px-28 py-16 bg-info">
+      <div className="py-16 px-28 bg-info">
         <div className="text-white w-2/3">
           <p className="text-2xl leading-snug mb-5">{data?.course?.name || ''}</p>
           <p className="text-sm font-light opacity-80 mb-5">{data?.course?.description || ''}</p>
           <div className="flex flex-row">
             <div className="align-middle">
-              <Link to="">
+              <Link to="/">
                 <span className="inline-block">
                   <img
                     src={data?.course?.user?.avatar || DEFAULT_AVATAR}
@@ -45,19 +45,22 @@ const MyLearningDetail = () => {
         </div>
       </div>
       {/** Manage course */}
-      <div>
+      <div className="px-28 py-14">
         <Tabs
           defaultActiveKey="1"
-          type="card"
           size="large"
-          items={new Array(3).fill(null).map((_, i) => {
-            const id = String(i + 1)
-            return {
-              label: `Classes`,
-              key: id,
-              children: <ClassList data={(data?.course?.classes as Class[]) || []} />,
-            }
-          })}
+          items={[
+            {
+              label: `Assignments`,
+              key: `1`,
+              children: <ClassList courseId={data?.course?.id || ''} />,
+            },
+            {
+              label: `Payments`,
+              key: `2`,
+              children: <ClassList courseId={data?.course?.id || ''} />,
+            },
+          ]}
         />
       </div>
     </div>

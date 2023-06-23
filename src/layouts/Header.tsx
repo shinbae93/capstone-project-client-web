@@ -153,10 +153,10 @@ const Header = () => {
               ],
             }}
           >
-            <Avatar src={currentUser.avatar} />
+            <Avatar src={currentUser?.avatar} />
           </Dropdown>
         ) : (
-          <Link to="/login">
+          <Link to="/auth/login">
             <Button className="bg-primary text-white font-semibold hover:border-primary">
               Login
             </Button>

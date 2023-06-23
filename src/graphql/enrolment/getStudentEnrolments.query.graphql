@@ -1,0 +1,25 @@
+query studentEnrolments($queryParams: EnrolmentQueryParams) {
+  enrolments(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      isFinished
+      createdAt
+      user {
+        id
+        fullName
+        email
+        avatar
+        gender
+        birthday
+        phoneNumber
+      }
+    }
+  }
+}

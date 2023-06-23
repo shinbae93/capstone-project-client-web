@@ -18,7 +18,7 @@ const authLink = new ApolloLink((operation, forward) => {
 
 const errorLink = onError(({ graphQLErrors, forward, operation }) => {
   if (graphQLErrors) {
-    if ((graphQLErrors[0]?.extensions?.originalError as any)?.statusCode === 401) {
+    if (graphQLErrors[0]?.message === 'Unauthorized') {
       //  We assume we have both tokens needed to run the async request
       handleRefreshToken({ forward, operation })
     }

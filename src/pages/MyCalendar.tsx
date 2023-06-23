@@ -1,6 +1,6 @@
 import { Badge, BadgeProps, Calendar, Popover, Space, Tag } from 'antd'
 import { Dayjs } from 'dayjs'
-import { Calendar as CalendarObject, useGetCalendarQuery } from '../graphql/generated/graphql'
+import { Calendar as CalendarObject, useGetMyCalendarQuery } from '../graphql/generated/graphql'
 import { groupBy } from 'lodash'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
@@ -25,6 +25,7 @@ const PopOverContent: FC<PopOverContentProps> = ({ calendar }) => (
     </p>
     <p>Class: {calendar.className}</p>
     <p>Method: {calendar.method}</p>
+    <p>Status: {calendar.status}</p>
     <p>
       Time: {calendar.startTime} - {calendar.endTime}
     </p>
@@ -33,9 +34,9 @@ const PopOverContent: FC<PopOverContentProps> = ({ calendar }) => (
 )
 
 const MyCalendar = () => {
-  const { data: getCalendarQueryResult } = useGetCalendarQuery()
+  const { data: getCalendarQueryResult } = useGetMyCalendarQuery()
 
-  const data = groupBy(getCalendarQueryResult?.calendars || [], 'date')
+  const data = groupBy(getCalendarQueryResult?.myCalendars || [], 'date')
 
   const dateCellRender = (value: Dayjs) => {
     const listData = data[value.format('YYYY-MM-DD')]

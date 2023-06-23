@@ -6,7 +6,7 @@ import {
   CourseStatus,
   Enrolment,
   PaginationMeta,
-  useEnrolmentsQuery,
+  useGetMyEnrolmentsQuery,
 } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
 import { convertEnrolmentsToLearningItems } from '../utils/course-table'
@@ -22,7 +22,7 @@ const MyLearning = () => {
   const [statuses, setStatuses] = useState<CourseStatus[]>(Object.values(CourseStatus))
   const [page, setPage] = useState(1)
 
-  const { data, loading } = useEnrolmentsQuery({
+  const { data, loading } = useGetMyEnrolmentsQuery({
     variables: {
       queryParams: {
         pagination: {
@@ -51,8 +51,10 @@ const MyLearning = () => {
             label: <p className="font-normal">All</p>,
             children: (
               <MyLearningList
-                data={convertEnrolmentsToLearningItems(data?.enrolments.items as Enrolment[])}
-                pagination={data?.enrolments.meta as PaginationMeta}
+                data={convertEnrolmentsToLearningItems(
+                  (data?.myEnrolments?.items as Enrolment[]) || []
+                )}
+                pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
               />
             ),
@@ -62,8 +64,10 @@ const MyLearning = () => {
             label: <p className="font-normal">Not started</p>,
             children: (
               <MyLearningList
-                data={convertEnrolmentsToLearningItems(data?.enrolments.items as Enrolment[])}
-                pagination={data?.enrolments.meta as PaginationMeta}
+                data={convertEnrolmentsToLearningItems(
+                  (data?.myEnrolments?.items as Enrolment[]) || []
+                )}
+                pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
               />
             ),
@@ -73,8 +77,10 @@ const MyLearning = () => {
             label: <p className="font-normal">In progress</p>,
             children: (
               <MyLearningList
-                data={convertEnrolmentsToLearningItems(data?.enrolments.items as Enrolment[])}
-                pagination={data?.enrolments.meta as PaginationMeta}
+                data={convertEnrolmentsToLearningItems(
+                  (data?.myEnrolments?.items as Enrolment[]) || []
+                )}
+                pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
               />
             ),
@@ -84,8 +90,10 @@ const MyLearning = () => {
             label: <p className="font-normal">Finished</p>,
             children: (
               <MyLearningList
-                data={convertEnrolmentsToLearningItems(data?.enrolments.items as Enrolment[])}
-                pagination={data?.enrolments.meta as PaginationMeta}
+                data={convertEnrolmentsToLearningItems(
+                  (data?.myEnrolments?.items as Enrolment[]) || []
+                )}
+                pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
               />
             ),

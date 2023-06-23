@@ -17,7 +17,6 @@ import { RoleId } from '../common/constants'
 const ProfileLayout = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  console.log('🚀 ~ file: ProfileLayout.tsx:14 ~ ProfileLayout ~ location:', location)
   const { currentUser } = useContext(AuthContext)
 
   return (

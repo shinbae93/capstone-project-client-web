@@ -2,9 +2,10 @@ import { Tabs } from 'antd'
 import { Link, useParams } from 'react-router-dom'
 import { DEFAULT_AVATAR } from '../common/constants'
 import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
-import { Class, useCourseQuery } from '../graphql/generated/graphql'
-import Loading from '../shared/components/Loading'
 import ClassList from '../features/my-course-detail/components/ClassList'
+import { useCourseQuery } from '../graphql/generated/graphql'
+import Loading from '../shared/components/Loading'
+import StudentList from '../features/my-course-detail/components/StudentList'
 
 const MyCourseDetail = () => {
   const { id } = useParams()
@@ -53,7 +54,22 @@ const MyCourseDetail = () => {
             {
               label: `Classes`,
               key: `1`,
-              children: <ClassList data={(data?.course?.classes as Class[]) || []} />,
+              children: <ClassList courseId={data?.course?.id || ''} />,
+            },
+            {
+              label: `Students`,
+              key: `2`,
+              children: <StudentList courseId={data?.course?.id || ''} />,
+            },
+            {
+              label: `Payments`,
+              key: `3`,
+              children: <ClassList courseId={data?.course?.id || ''} />,
+            },
+            {
+              label: `Assignments`,
+              key: `4`,
+              children: <ClassList courseId={data?.course?.id || ''} />,
             },
           ]}
         />

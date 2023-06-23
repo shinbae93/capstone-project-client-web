@@ -1,5 +1,5 @@
-query enrolments($queryParams: EnrolmentQueryParams) {
-  enrolments(queryParams: $queryParams) {
+query getMyEnrolments($queryParams: EnrolmentQueryParams) {
+  myEnrolments(queryParams: $queryParams) {
     meta {
       itemCount
       totalItems
@@ -20,7 +20,12 @@ query enrolments($queryParams: EnrolmentQueryParams) {
         endDate
         user {
           id
+          avatar
           fullName
+          email
+          phoneNumber
+          gender
+          birthday
         }
       }
     }

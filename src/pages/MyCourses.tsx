@@ -31,6 +31,7 @@ import {
 import Loading from '../shared/components/Loading'
 import { CurrencyFormatter } from '../utils/format'
 import { toastCreateSuccess, toastRemoveSuccess, toastUpdateSuccess } from '../utils/toast'
+import { DeepPartial } from '../utils/type'
 
 export interface MyCoursesItemDataType {
   key: React.Key
@@ -72,8 +73,7 @@ const MyCourses = () => {
   const [searchedColumn, setSearchedColumn] = useState('')
   const [page, setPage] = useState(1)
   const [openCreateModal, setOpenCreateModal] = useState(false)
-  const [openUpdateModal, setOpenUpdateModal] = useState(false)
-  const [selectedCourse, setSelectedCourse] = useState<Partial<Course>>()
+  const [selectedCourse, setSelectedCourse] = useState<DeepPartial<Course | undefined>>(undefined)
 
   const searchInput = useRef<InputRef>(null)
 
@@ -85,7 +85,7 @@ const MyCourses = () => {
           limit: DEFAULT_LIMIT_ITEMS,
         },
         filters: {
-          userId: currentUser.id,
+          userId: currentUser?.id,
         },
       },
     },
@@ -145,6 +145,10 @@ const MyCourses = () => {
     setSearchText('')
     setSearchedColumn('')
     confirm({ closeDropdown: true })
+  }
+
+  const clearSelectedCourse = () => {
+    return setSelectedCourse(undefined)
   }
 
   const getColumnSearchProps = (
@@ -215,7 +219,7 @@ const MyCourses = () => {
       dataIndex: 'thumbnail',
       width: '10%',
       render: (value: string, record) => (
-        <Link to={`/courses/${record.key}`}>
+        <Link to={`/courses/${record.key}/manage`}>
           <img src={value} alt="course-thumbnail" className="w-14 h-14" />
         </Link>
       ),
@@ -227,7 +231,7 @@ const MyCourses = () => {
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ['descend', 'ascend'],
       ...getColumnSearchProps('name'),
-      render: (value: string, record) => <Link to={`/courses/${record.key}`}>{value}</Link>,
+      render: (value: string, record) => <Link to={`/courses/${record.key}/manage`}>{value}</Link>,
     },
     {
       title: 'Status',
@@ -293,6 +297,16 @@ const MyCourses = () => {
       fixed: 'right',
       render: (_, course) => (
         <Space size="middle">
+          <>
+            <Tooltip title="View">
+              <EyeOutlined
+                onClick={() => {
+                  navigate(`/courses/${course.key}/manage`)
+                }}
+                className="text-primary"
+              />
+            </Tooltip>
+          </>
           {!course.isPublished && (
             <>
               <Tooltip title="Publish">
@@ -322,10 +336,8 @@ const MyCourses = () => {
                       variables: {
                         id: String(course.key),
                       },
-                      onCompleted: (data) => {
-                        setSelectedCourse({ ...data?.course } as Course)
-                        setOpenUpdateModal(true)
-                      },
+                    }).then((res) => {
+                      setSelectedCourse({ ...res?.data?.course } as Course)
                     })
                   }}
                   className="text-primary"
@@ -352,18 +364,6 @@ const MyCourses = () => {
               </Tooltip>
             </>
           )}
-          {course.isPublished && (
-            <>
-              <Tooltip title="View">
-                <EyeOutlined
-                  onClick={() => {
-                    navigate(`/courses/${course.key}/manage`)
-                  }}
-                  className="text-primary"
-                />
-              </Tooltip>
-            </>
-          )}
         </Space>
       ),
     },
@@ -375,12 +375,11 @@ const MyCourses = () => {
     <div>
       <UpdateCourseForm
         course={selectedCourse}
-        open={openUpdateModal}
         onUpdate={() => {
+          clearSelectedCourse()
           refetch()
-          setOpenUpdateModal(false)
         }}
-        onCancel={() => setOpenUpdateModal(false)}
+        onCancel={() => clearSelectedCourse()}
       />
       <CreateCourseForm
         open={openCreateModal}
@@ -421,7 +420,7 @@ const MyCourses = () => {
                   limit: DEFAULT_LIMIT_ITEMS,
                 },
                 filters: {
-                  userId: currentUser.id,
+                  userId: currentUser?.id,
                 },
               },
             })

@@ -38,7 +38,7 @@ export const handleRefreshToken = ({ forward, operation }: ErrorResponse) => {
             },
           })
           .then((res) => {
-            const token = res.data?.refreshToken
+            const token = res.data.refreshToken
             if (token) {
               setToken(token)
               setRequestHeaders({ operation, token })

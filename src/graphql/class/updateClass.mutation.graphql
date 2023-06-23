@@ -1,0 +1,5 @@
+mutation updateClass($input: UpdateClassInput!) {
+  updateClass(input: $input) {
+    id
+  }
+}

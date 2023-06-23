@@ -7,9 +7,16 @@ import {
 } from '@ant-design/icons'
 import { Button, Form, Modal, Select, Table, Tag, Tooltip } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { CourseStatusDisplay, DEFAULT_AVATAR, DEFAULT_IMG, MOCK_TEXT } from '../common/constants'
+import { useContext, useState } from 'react'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import {
+  CourseStatusDisplay,
+  DEFAULT_AVATAR,
+  DEFAULT_IMG,
+  MOCK_TEXT,
+  RoleId,
+} from '../common/constants'
+import { AuthContext } from '../context/auth.context'
 import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
 import {
   Class,
@@ -17,10 +24,12 @@ import {
   ScheduleTime,
   useCourseQuery,
   useCreateEnrolmentMutation,
+  useIsEnrolledQuery,
 } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
 import { CurrencyFormatter } from '../utils/format'
 import { convertScheduleToString } from '../utils/schedule'
+import { toastCreateSuccess } from '../utils/toast'
 
 const classColumns: ColumnsType<Class> = [
   {
@@ -61,6 +70,14 @@ const classColumns: ColumnsType<Class> = [
 
 const CourseDetail = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const { currentUser } = useContext(AuthContext)
+
+  const { data: isEnrolledResult, refetch: refetchIsEnrolled } = useIsEnrolledQuery({
+    variables: {
+      courseId: String(id),
+    },
+  })
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -173,18 +190,32 @@ const CourseDetail = () => {
                 </span>
                 <Tooltip
                   title={
-                    data?.course?.status == CourseStatus.Ended ? 'This course is end' : undefined
+                    data?.course?.status == CourseStatus.Ended && !isEnrolledResult?.isEnrolled
+                      ? 'This course is end'
+                      : undefined
                   }
                 >
                   <span className="flex justify-center pt-4 pb-2">
-                    <Button
-                      className="bg-primary"
-                      type="primary"
-                      onClick={showModal}
-                      disabled={data?.course?.status == CourseStatus.Ended}
-                    >
-                      <p className="font-medium">Enroll Now</p>
-                    </Button>
+                    {isEnrolledResult?.isEnrolled ? (
+                      <Button
+                        className="bg-primary"
+                        type="primary"
+                        onClick={() => {
+                          navigate(currentUser?.roleId === RoleId.TUTOR ? 'manage' : 'learning')
+                        }}
+                      >
+                        <p className="font-medium">View</p>
+                      </Button>
+                    ) : (
+                      <Button
+                        className="bg-primary"
+                        type="primary"
+                        onClick={showModal}
+                        disabled={data?.course?.status == CourseStatus.Ended}
+                      >
+                        <p className="font-medium">Enroll Now</p>
+                      </Button>
+                    )}
                   </span>
                 </Tooltip>
               </div>
@@ -262,15 +293,17 @@ const CourseDetail = () => {
           className="border-t-[1px] border-info"
           id="createEnrolment"
           onFinish={async ({ classId }) => {
-            const { errors } = await createEnrolmentMutation({
+            await createEnrolmentMutation({
               variables: {
                 classId,
               },
+              onCompleted: () => {
+                toastCreateSuccess()
+                refetch()
+                refetchIsEnrolled()
+              },
             })
             handleOk()
-            if (!errors?.length) {
-              refetch()
-            }
           }}
         >
           <Form.Item

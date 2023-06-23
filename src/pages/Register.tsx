@@ -35,7 +35,7 @@ const Register = () => {
         notification.success({
           message: 'Register successfully',
         })
-        navigate('/login')
+        navigate('/auth/login')
       },
       variables: {
         input,

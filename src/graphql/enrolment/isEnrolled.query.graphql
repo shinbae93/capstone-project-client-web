@@ -1,0 +1,3 @@
+query isEnrolled($courseId: ID!) {
+  isEnrolled(courseId: $courseId)
+}

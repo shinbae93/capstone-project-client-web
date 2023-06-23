@@ -310,7 +310,7 @@ const Home = () => {
                   viewBox="0 0 75 75"
                   fill="none"
                 >
-                  <g clip-path="url(#clip0_2575_9428)">
+                  <g clipPath="url(#clip0_2575_9428)">
                     <path
                       d="M61.931 23.7031H56.4773V17.8928C56.4773 14.5632 55.2246 11.3914 52.9499 8.96191C52.527 8.51016 51.818 8.48701 51.3665 8.90991C50.9149 9.33281 50.8916 10.0417 51.3145 10.4931C53.199 12.506 54.237 15.1339 54.237 17.8928V23.7031H31.4423C24.236 23.7031 18.3732 29.566 18.3732 36.7723V40.7798H16.6187C15.9207 40.7798 15.2643 41.0517 14.7705 41.5453L8.82495 47.4908V41.5099C8.82495 40.5936 8.33437 39.7326 7.54438 39.2629C4.2728 37.3178 2.24033 33.7497 2.24033 29.9512V17.8928C2.24033 11.9218 7.09805 7.06406 13.069 7.06406H43.4083C44.8078 7.06406 46.1691 7.32671 47.4543 7.84497C48.0281 8.07598 48.6809 7.79853 48.9122 7.2249C49.1435 6.65112 48.8659 5.99839 48.2921 5.76709C46.7395 5.14102 45.0962 4.82373 43.4083 4.82373H13.069C5.86274 4.82373 0 10.6865 0 17.8928V29.9512C0 34.5359 2.45215 38.8418 6.39946 41.1886C6.51372 41.2566 6.58462 41.3796 6.58462 41.51V48.0318C6.58462 48.8502 7.07314 49.5813 7.8293 49.8946C8.33394 50.1372 9.36431 50.1022 10.0267 49.4577L16.3545 43.1297C16.4251 43.0591 16.5189 43.0203 16.6187 43.0203H18.3732V48.8306C18.3732 50.5945 18.7189 52.3062 19.4007 53.9181C19.6417 54.4878 20.2989 54.754 20.8688 54.5134C21.4386 54.2725 21.705 53.6152 21.4642 53.0454C20.9 51.7112 20.6137 50.2932 20.6137 48.8307V36.7724C20.6137 30.8013 25.4714 25.9436 31.4424 25.9436H61.931C67.902 25.9436 72.7597 30.8013 72.7597 36.7724V48.8307C72.7597 52.644 70.8098 56.1051 67.5436 58.0894C66.7739 58.5571 66.2956 59.4107 66.2956 60.3168V67.6229L59.0977 60.4248C58.604 59.9312 57.9476 59.6593 57.2495 59.6593H31.4423C28.7249 59.6593 26.1264 58.6485 24.1252 56.8134C23.6694 56.3955 22.9608 56.4259 22.5425 56.8818C22.1243 57.3378 22.1549 58.0463 22.6109 58.4646C25.0263 60.6798 28.1625 61.8998 31.4421 61.8998H57.2492C57.3475 61.8998 57.4437 61.9396 57.5131 62.0092L65.0936 69.5896C65.6789 70.0395 66.2511 70.3872 67.2908 70.0266C68.047 69.7132 68.5355 68.9821 68.5355 68.1637V60.3167C68.5355 60.1879 68.6011 60.068 68.7066 60.004C72.6475 57.61 75 53.4331 75 48.8306V36.7723C75 29.566 69.1373 23.7031 61.931 23.7031Z"
                       fill="#FFB606"
@@ -361,25 +361,27 @@ const Home = () => {
       </div>
       {/** Sponsors */}
       <div>
-        <div className="px-28 py-20 grid grid-cols-5">
-          <div>
-            <img
-              src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-1-1.png"
-              className="opacity-70"
-            />
-          </div>
-          <div>
-            <img src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-2-1.png" />
-          </div>
-          <div>
-            <img src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-3-1.png" />
-          </div>
-          <div>
-            <img src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-4-1.png" />
-          </div>
-          <div>
-            <img src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-5-1.png" />
-          </div>
+        <div className="px-28 py-20 grid grid-cols-5 justify-items-center">
+          <img
+            src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-1-1.png"
+            className="opacity-30 hover:opacity-80"
+          />
+          <img
+            src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-2-1.png"
+            className="opacity-30 hover:opacity-80"
+          />
+          <img
+            src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-3-1.png"
+            className="opacity-30 hover:opacity-80"
+          />
+          <img
+            src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-4-1.png"
+            className="opacity-30 hover:opacity-80"
+          />
+          <img
+            src="https://eduma.thimpress.com/demo-udemy/wp-content/uploads/sites/93/2022/06/icon-partner-5-1.png"
+            className="opacity-30 hover:opacity-80"
+          />
         </div>
       </div>
       {/** Subcribe mail for more info */}

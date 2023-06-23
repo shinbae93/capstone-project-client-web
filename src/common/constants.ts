@@ -36,3 +36,9 @@ export const RoleId = {
   TUTOR: '33358dbf-7697-4324-bccd-334a3691b84b',
   STUDENT: '9a588a6e-c21e-48f5-a8da-307724a76b89',
 } as const
+
+export const GenderDisplay = {
+  0: 'Male',
+  1: 'Female',
+  2: 'Other',
+}

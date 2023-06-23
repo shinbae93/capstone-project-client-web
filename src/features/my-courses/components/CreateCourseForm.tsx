@@ -31,7 +31,6 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({ open, onCreate, onC
       okText="Create"
       cancelText="Cancel"
       destroyOnClose
-      confirmLoading={true}
       onCancel={() => {
         form.resetFields()
         onCancel()

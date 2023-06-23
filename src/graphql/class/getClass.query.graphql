@@ -1,5 +1,5 @@
-query classes($queryParams: ClassQueryParams!) {
-  classes(queryParams: $queryParams) {
+query getClass($id: ID!) {
+  getClass(id: $id) {
     id
     name
     method
@@ -8,7 +8,6 @@ query classes($queryParams: ClassQueryParams!) {
       startTime
       endTime
     }
-    occupiedSlots
     totalSlots
   }
 }
