@@ -1,0 +1,6 @@
+mutation createQuiz($input: CreateQuizInput!) {
+  createQuiz(input: $input) {
+    id
+    title
+  }
+}

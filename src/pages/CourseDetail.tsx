@@ -1,12 +1,21 @@
+import { BankOutlined, BookOutlined, CalendarOutlined, CheckOutlined } from '@ant-design/icons'
+import { CardElement } from '@stripe/react-stripe-js'
 import {
-  BankOutlined,
-  BookOutlined,
-  CalendarOutlined,
-  CheckOutlined,
-  ClockCircleOutlined,
-} from '@ant-design/icons'
-import { Button, Form, Modal, Select, Table, Tag, Tooltip } from 'antd'
+  Avatar,
+  Button,
+  Form,
+  InputNumber,
+  Modal,
+  Rate,
+  Select,
+  Table,
+  Tag,
+  Tooltip,
+  notification,
+} from 'antd'
+import { useForm } from 'antd/es/form/Form'
 import type { ColumnsType } from 'antd/es/table'
+import dayjs from 'dayjs'
 import { useContext, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
@@ -22,27 +31,33 @@ import {
   Class,
   CourseStatus,
   ScheduleTime,
+  useChargeMutation,
   useCourseQuery,
   useCreateEnrolmentMutation,
   useIsEnrolledQuery,
+  useIsPayForCourseQuery,
 } from '../graphql/generated/graphql'
+import usePaymentForm from '../hooks/usePayment'
 import Loading from '../shared/components/Loading'
-import { CurrencyFormatter } from '../utils/format'
 import { convertScheduleToString } from '../utils/schedule'
-import { toastCreateSuccess } from '../utils/toast'
+import { CurrencyFormatter } from '../utils/format'
 
-const classColumns: ColumnsType<Class> = [
+const classModalColumns: ColumnsType<Class> = [
   {
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    render: (name: string) => <p className="font-thin">{name}</p>,
+    render: (name: string) => <p>{name}</p>,
   },
   {
-    title: 'Method',
-    dataIndex: 'method',
-    key: 'method',
-    render: (method: string) => <p className="font-thin font-mono">{method}</p>,
+    title: 'Start date',
+    key: 'startDate',
+    render: (_, record) => <p>{dayjs(record.startDate).format('DD/MM/YYYY')}</p>,
+  },
+  {
+    title: 'End date',
+    key: 'endDate',
+    render: (_, record) => <p>{dayjs(record.endDate).format('DD/MM/YYYY')}</p>,
   },
   {
     title: 'Schedule',
@@ -51,9 +66,56 @@ const classColumns: ColumnsType<Class> = [
     render: (schedule: ScheduleTime[]) => (
       <>
         {schedule?.map((item, index) => (
-          <p key={index} className="font-thin">
-            {convertScheduleToString(item)}
-          </p>
+          <p key={index}>{convertScheduleToString(item)}</p>
+        ))}
+      </>
+    ),
+  },
+]
+
+const classColumns: ColumnsType<Class> = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+    render: (name: string) => <p>{name}</p>,
+  },
+  {
+    title: 'Fee',
+    dataIndex: 'fee',
+    key: 'fee',
+    render: (fee: number) => <p>{CurrencyFormatter.format(fee || 0)}</p>,
+  },
+  {
+    title: 'Method',
+    dataIndex: 'method',
+    key: 'method',
+    render: (method: string) => <p>{method}</p>,
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    key: 'address',
+    render: (address: string) => <p>{address}</p>,
+  },
+  {
+    title: 'Duration',
+    key: 'duration',
+    render: (_, record) => (
+      <p>
+        {dayjs(record.startDate).format('DD/MM/YYYY')} -{' '}
+        {dayjs(record.endDate).format('DD/MM/YYYY')}
+      </p>
+    ),
+  },
+  {
+    title: 'Schedule',
+    dataIndex: 'schedule',
+    key: 'schedule',
+    render: (schedule: ScheduleTime[]) => (
+      <>
+        {schedule?.map((item, index) => (
+          <p key={index}>{convertScheduleToString(item)}</p>
         ))}
       </>
     ),
@@ -69,23 +131,44 @@ const classColumns: ColumnsType<Class> = [
 ]
 
 const CourseDetail = () => {
-  const { id } = useParams()
+  const { courseId } = useParams()
   const navigate = useNavigate()
   const { currentUser } = useContext(AuthContext)
+  const [form] = useForm()
+  const { handleSubmit } = usePaymentForm()
+  const [charge] = useChargeMutation()
 
   const { data: isEnrolledResult, refetch: refetchIsEnrolled } = useIsEnrolledQuery({
+    fetchPolicy: 'network-only',
     variables: {
-      courseId: String(id),
+      courseId: String(courseId),
     },
   })
+  console.log(
+    '🚀 ~ file: CourseDetail.tsx:140 ~ CourseDetail ~ isEnrolledResult:',
+    isEnrolledResult
+  )
+
+  const { data: isPaid, refetch: refethIsPaid } = useIsPayForCourseQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      courseId: String(courseId),
+    },
+  })
+  console.log('🚀 ~ file: CourseDetail.tsx:151 ~ CourseDetail ~ isPaid:', isPaid)
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
+  const [selectedClassId, setSelectedClassId] = useState<string | null>(
+    isPaid?.myEnrolmentByCourse?.classId || null
+  )
 
   const [createEnrolmentMutation] = useCreateEnrolmentMutation()
 
   const { data, loading, refetch } = useCourseQuery({
+    fetchPolicy: 'network-only',
     variables: {
-      id: String(id),
+      id: String(courseId),
     },
   })
 
@@ -110,20 +193,29 @@ const CourseDetail = () => {
       {/** Header of course */}
       <div className="py-16 bg-info">
         <div className="px-28 relative">
-          <div className="text-white w-2/3">
+          <div className="text-white w-3/4">
             <p className="text-2xl leading-snug mb-5">{data?.course?.name || ''}</p>
             <p className="text-sm font-light opacity-80 mb-5">{data?.course?.description || ''}</p>
             <div className="flex flex-row">
               <div className="align-middle">
                 <Link to="">
                   <span className="inline-block">
-                    <img
+                    <Avatar
                       src={data?.course?.user?.avatar || DEFAULT_AVATAR}
-                      className="rounded-full inline-block h-10"
+                      className="inline-block h-10 w-10"
                     />
                     <span className="inline-block align-middle px-4">
                       <p className="text-[12px] font-thin">Teacher</p>
-                      <p className="text-sm">{data?.course?.user?.fullName}</p>
+                      <Link to={`/tutors/${data?.course?.userId}`}>
+                        <p className="text-sm">{data?.course?.user?.fullName}</p>
+                      </Link>
+                      <Rate
+                        disabled
+                        allowHalf
+                        defaultValue={data?.course?.user?.tutorDetail?.rating || 0}
+                        className="text-sm"
+                      />
+                      <p className="inline-block ml-3 align-middle">{`(${data?.course?.user?.tutorDetail?.totalReviews})`}</p>
                     </span>
                   </span>
                 </Link>
@@ -139,17 +231,12 @@ const CourseDetail = () => {
                 className="object-cover"
               />
               <div className="px-3">
-                <p className="text-xl py-5 font-bold font-sans">
-                  {data?.course?.fee && data?.course?.fee > 0
-                    ? CurrencyFormatter.format(data?.course?.fee)
-                    : 'Free'}
-                </p>
                 <p className="font-semibold pb-3">Course information:</p>
                 <span className="flex flex-row items-center py-1">
                   <Tooltip title="Grade">
                     <BankOutlined className="text-primary" />
                   </Tooltip>
-                  <p className="inline-block text-sm font-thin text-slate-600 px-2">
+                  <p className="inline-block text-sm text-slate-600 px-2">
                     {data?.course?.grade?.name}
                   </p>
                 </span>
@@ -157,16 +244,8 @@ const CourseDetail = () => {
                   <Tooltip title="Subject">
                     <BookOutlined className="text-primary" />
                   </Tooltip>
-                  <p className="inline-block text-sm font-thin text-slate-600 px-2">
+                  <p className="inline-block text-sm text-slate-600 px-2">
                     {data?.course?.subject?.name}
-                  </p>
-                </span>
-                <span className="flex flex-row items-center py-1">
-                  <Tooltip title="Duration">
-                    <ClockCircleOutlined className="text-primary" />
-                  </Tooltip>
-                  <p className="inline-block text-sm font-thin text-slate-600 px-2">
-                    Duration {data?.course?.duration || 0} months
                   </p>
                 </span>
                 <span className="flex flex-row items-center py-1">
@@ -176,15 +255,19 @@ const CourseDetail = () => {
                   <Tag
                     color={
                       data?.course?.status == 'UP_COMING'
-                        ? '#87d068'
+                        ? '#fadb14'
                         : data?.course?.status == 'IN_PROGRESS'
-                        ? '#2db7f5'
-                        : '#ED2B2A'
+                        ? '#a0d911'
+                        : '#cf1322'
                     }
                     className="mx-2"
                   >
-                    <p className="inline-block text-sm font-thin text-white">
-                      {CourseStatusDisplay[data?.course?.status || 'UP_COMING']}
+                    <p className="inline-block text-sm font-normal text-white">
+                      {
+                        CourseStatusDisplay[
+                          data?.course?.status as keyof typeof CourseStatusDisplay
+                        ]
+                      }
                     </p>
                   </Tag>
                 </span>
@@ -200,8 +283,33 @@ const CourseDetail = () => {
                       <Button
                         className="bg-primary"
                         type="primary"
-                        onClick={() => {
-                          navigate(currentUser?.roleId === RoleId.TUTOR ? 'manage' : 'learning')
+                        onClick={async () => {
+                          if (
+                            data?.course?.userId == currentUser?.id ||
+                            isPaid?.myEnrolmentByCourse?.paymentId
+                          ) {
+                            navigate(
+                              data?.course?.userId == currentUser?.id ? 'manage' : 'learning'
+                            )
+                          } else {
+                            Modal.confirm({
+                              centered: true,
+                              closable: true,
+                              okText: 'Pay now',
+                              content: (
+                                <p className="py-4">
+                                  You have not pay for this enrolment yet! Please pay now to access
+                                  this course.
+                                </p>
+                              ),
+                              maskClosable: true,
+                              onOk: () => {
+                                setSelectedClassId(isPaid?.myEnrolmentByCourse?.classId || '')
+                                setIsPaymentModalOpen(true)
+                              },
+                              title: 'View course',
+                            })
+                          }
                         }}
                       >
                         <p className="font-medium">View</p>
@@ -223,7 +331,7 @@ const CourseDetail = () => {
           </div>
         </div>
       </div>
-      <div className="w-2/3 px-28 py-8">
+      <div className="w-[72%] px-28 py-8">
         {/** What you'll learn */}
         <div className="border-[1px] border-info">
           <div className="p-5">
@@ -254,12 +362,16 @@ const CourseDetail = () => {
           <div className="p-5">
             <p className="font-semibold pb-4 border-b-[1px] border-info">TUTOR</p>
             <div className="py-7 flex flex-row gap-7">
-              <img
-                src={data?.course?.user?.avatar || DEFAULT_AVATAR}
-                className="rounded-full h-28 w-28"
-              />
+              <Link to={`/tutors/${data?.course?.userId}`}>
+                <img
+                  src={data?.course?.user?.avatar || DEFAULT_AVATAR}
+                  className="rounded-full w-52 aspect-square object-cover"
+                />
+              </Link>
               <div>
-                <p className="font-semibold text-base py-1">{data?.course?.user?.fullName}</p>
+                <Link to={`/tutors/${data?.course?.userId}`}>
+                  <p className="font-semibold text-base py-1">{data?.course?.user?.fullName}</p>
+                </Link>
                 <p className="font-thin text-xs pb-4 text-footer">
                   {data?.course?.user?.tutorDetail?.headline}
                 </p>
@@ -274,6 +386,9 @@ const CourseDetail = () => {
 
       <Modal
         title="Enrollment"
+        className="w-2/5"
+        maskClosable
+        destroyOnClose
         open={isModalOpen}
         footer={[
           <Button onClick={handleCancel}>Cancel</Button>,
@@ -289,27 +404,49 @@ const CourseDetail = () => {
       >
         <Form
           layout="vertical"
-          style={{ maxWidth: 600 }}
           className="border-t-[1px] border-info"
           id="createEnrolment"
-          onFinish={async ({ classId }) => {
+          onFinish={async (values) => {
             await createEnrolmentMutation({
               variables: {
-                classId,
+                input: {
+                  ...values,
+                },
               },
               onCompleted: () => {
-                toastCreateSuccess()
+                setSelectedClassId(values.classId)
+                Modal.success({
+                  centered: true,
+                  closable: true,
+                  content: (
+                    <p className="py-4">
+                      Enrolled successfully! Please pay within 15 minutes or your enrolment will be
+                      unavailable.
+                    </p>
+                  ),
+                  maskClosable: true,
+                  okText: 'Pay now',
+                  onOk: () => setIsPaymentModalOpen(true),
+                  title: 'Enroll successfully',
+                })
                 refetch()
                 refetchIsEnrolled()
+                refethIsPaid()
               },
             })
             handleOk()
           }}
         >
+          <p className="p-2 font-semibold text-sm">Class list</p>
+          <Table
+            dataSource={data?.course?.classes || []}
+            pagination={false}
+            columns={classModalColumns as any}
+          ></Table>
+
           <Form.Item
             messageVariables={{ name: 'Class' }}
             label={<p>Please select class to complete your enrolment</p>}
-            className="py-6"
             name="classId"
             rules={[
               {
@@ -318,13 +455,99 @@ const CourseDetail = () => {
             ]}
             required
           >
-            <Select className="py-1" placeholder="Select class...">
+            <Select
+              className="py-1 w-1/2"
+              placeholder="Select class..."
+              defaultActiveFirstOption={true}
+            >
               {data?.course?.classes?.map((item, index) => (
                 <Select.Option value={item.id} key={index}>
                   {item.name}
                 </Select.Option>
               ))}
             </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="totalMonths"
+            label="Number of Months"
+            valuePropName={'date'}
+            className="inline-block w-1/2 pl-2"
+            required
+          >
+            <Select className="py-1" placeholder="Select months...">
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((item) => (
+                <Select.Option value={item} key={item}>
+                  {item}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        open={isPaymentModalOpen}
+        centered={true}
+        closable={true}
+        maskClosable={true}
+        okText="Pay"
+        onCancel={() => {
+          form.resetFields()
+          setIsPaymentModalOpen(false)
+        }}
+        onOk={() => {
+          form.validateFields().then(async () => {
+            const paymentMethodId = await handleSubmit()
+
+            charge({
+              variables: {
+                input: {
+                  classId: selectedClassId || '',
+                  paymentMethodId: paymentMethodId || '',
+                },
+              },
+              onCompleted: () => {
+                notification.success({
+                  message: 'Paid successfully.',
+                })
+                form.resetFields()
+                refetch()
+                refethIsPaid()
+                refetchIsEnrolled()
+                setIsPaymentModalOpen(false)
+              },
+            })
+          })
+        }}
+        title="Pay"
+      >
+        <Form
+          preserve={false}
+          form={form}
+          layout="vertical"
+          name="create_course_form"
+          className="p-4"
+        >
+          <Form.Item
+            messageVariables={{ name: 'Amount' }}
+            label="Amount"
+            name={'amount'}
+            rules={[{ required: true, type: 'number' }]}
+            className="w-1/2"
+            initialValue={
+              (data?.course?.classes?.find((item) => item.id == selectedClassId)?.fee || 0) *
+              dayjs(isPaid?.myEnrolmentByCourse?.endTime).diff(
+                isPaid?.myEnrolmentByCourse?.startTime,
+                'month',
+                true
+              )
+            }
+          >
+            <InputNumber min={1} addonBefore={'$'} className="w-full" disabled />
+          </Form.Item>
+          <Form.Item label="Card information">
+            <CardElement />
           </Form.Item>
         </Form>
       </Modal>

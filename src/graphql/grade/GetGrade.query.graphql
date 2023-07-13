@@ -1,6 +1,17 @@
-query grades {
-  grades {
-    id
-    name
+query grades($queryParams: QueryParams!) {
+  grades(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      name
+      createdAt
+      updatedAt
+    }
   }
 }

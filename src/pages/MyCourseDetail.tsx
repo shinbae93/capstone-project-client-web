@@ -1,18 +1,20 @@
-import { Tabs } from 'antd'
+import { Avatar, Tabs } from 'antd'
 import { Link, useParams } from 'react-router-dom'
 import { DEFAULT_AVATAR } from '../common/constants'
 import CourseDetailBreadcrumb from '../features/course-detail/components/Breadcrumb'
-import ClassList from '../features/my-course-detail/components/ClassList'
+import ClassList from '../features/my-course-detail/components/ClassList/ClassList'
 import { useCourseQuery } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
 import StudentList from '../features/my-course-detail/components/StudentList'
+import QuizList from '../features/my-course-detail/components/QuizList/QuizList'
+import PaymentList from '../features/my-learning-detail/components/PaymentList'
 
 const MyCourseDetail = () => {
-  const { id } = useParams()
+  const { courseId } = useParams()
 
   const { data, loading } = useCourseQuery({
     variables: {
-      id: String(id),
+      id: String(courseId),
     },
   })
 
@@ -29,11 +31,11 @@ const MyCourseDetail = () => {
           <p className="text-sm font-light opacity-80 mb-5">{data?.course?.description || ''}</p>
           <div className="flex flex-row">
             <div className="align-middle">
-              <Link to="/">
+              <Link to={`/tutors/${data?.course?.userId}`}>
                 <span className="inline-block">
-                  <img
+                  <Avatar
                     src={data?.course?.user?.avatar || DEFAULT_AVATAR}
-                    className="rounded-full inline-block h-10"
+                    className="rounded-full inline-block h-10 w-10"
                   />
                   <span className="inline-block align-middle px-4">
                     <p className="text-[12px] font-thin">Teacher</p>
@@ -54,7 +56,12 @@ const MyCourseDetail = () => {
             {
               label: `Classes`,
               key: `1`,
-              children: <ClassList courseId={data?.course?.id || ''} />,
+              children: (
+                <ClassList
+                  courseId={data?.course?.id || ''}
+                  isPublished={data?.course?.isPublished || false}
+                />
+              ),
             },
             {
               label: `Students`,
@@ -62,14 +69,14 @@ const MyCourseDetail = () => {
               children: <StudentList courseId={data?.course?.id || ''} />,
             },
             {
-              label: `Payments`,
+              label: `Quizzes`,
               key: `3`,
-              children: <ClassList courseId={data?.course?.id || ''} />,
+              children: <QuizList courseId={data?.course?.id || ''} />,
             },
             {
-              label: `Assignments`,
+              label: `Payments`,
               key: `4`,
-              children: <ClassList courseId={data?.course?.id || ''} />,
+              children: <PaymentList courseId={data?.course?.id || ''} />,
             },
           ]}
         />

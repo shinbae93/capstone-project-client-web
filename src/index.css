@@ -1,13 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@300;400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body,
-html,
-p {
-  font-family: 'Chivo Mono', sans-serif !important;
+* {
+  font-family: 'Open Sans', sans-serif !important;
 }
 
 .App {

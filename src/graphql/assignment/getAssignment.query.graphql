@@ -1,0 +1,16 @@
+query getAssignment($id: ID!) {
+  assignment(id: $id) {
+    id
+    files
+    feedback
+    submittedAt
+    quiz {
+      id
+      title
+      content
+      files
+      startTime
+      endTime
+    }
+  }
+}

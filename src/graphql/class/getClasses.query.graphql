@@ -8,6 +8,8 @@ query classes($queryParams: ClassQueryParams!) {
       startTime
       endTime
     }
+    startDate
+    endDate
     occupiedSlots
     totalSlots
   }

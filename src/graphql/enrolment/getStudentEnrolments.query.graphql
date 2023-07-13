@@ -9,7 +9,6 @@ query studentEnrolments($queryParams: EnrolmentQueryParams) {
     }
     items {
       id
-      isFinished
       createdAt
       user {
         id

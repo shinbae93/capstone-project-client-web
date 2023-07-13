@@ -1,6 +1,17 @@
-query subjects {
-  subjects {
-    id
-    name
+query subjects($queryParams: QueryParams!) {
+  subjects(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      name
+      createdAt
+      updatedAt
+    }
   }
 }

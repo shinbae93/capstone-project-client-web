@@ -1,14 +1,21 @@
 import { Badge, BadgeProps, Calendar, Popover, Space, Tag } from 'antd'
 import { Dayjs } from 'dayjs'
-import { Calendar as CalendarObject, useGetMyCalendarQuery } from '../graphql/generated/graphql'
 import { groupBy } from 'lodash'
 import { FC } from 'react'
 import { Link } from 'react-router-dom'
+import { CourseStatusDisplay } from '../common/constants'
+import { Calendar as CalendarObject, useGetMyCalendarQuery } from '../graphql/generated/graphql'
 
 const BadgeStatus = {
   ENDED: 'error',
   IN_PROGRESS: 'processing',
   UP_COMING: 'warning',
+}
+
+const CalendarStatusColor = {
+  ENDED: '#cf1322',
+  IN_PROGRESS: '#a0d911',
+  UP_COMING: '#fadb14',
 }
 
 interface PopOverContentProps {
@@ -25,7 +32,15 @@ const PopOverContent: FC<PopOverContentProps> = ({ calendar }) => (
     </p>
     <p>Class: {calendar.className}</p>
     <p>Method: {calendar.method}</p>
-    <p>Status: {calendar.status}</p>
+    <p>Address: {calendar.class?.address}</p>
+    <p>
+      Status:{' '}
+      <Tag
+        color={CalendarStatusColor[calendar.status as keyof typeof CalendarStatusColor] || '#fff'}
+      >
+        {CourseStatusDisplay[calendar.status]}
+      </Tag>
+    </p>
     <p>
       Time: {calendar.startTime} - {calendar.endTime}
     </p>
@@ -50,7 +65,9 @@ const MyCalendar = () => {
           >
             <li key={item.id} className="overflow-x-hidden">
               <Badge
-                status={BadgeStatus[item.status] as BadgeProps['status']}
+                status={
+                  BadgeStatus[item.status as keyof typeof BadgeStatus] as BadgeProps['status']
+                }
                 text={`${item.courseName} - ${item.className}`}
                 className="hover:bg-[#dcdfe0] rounded whitespace-nowrap"
               />

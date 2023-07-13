@@ -1,6 +1,5 @@
-mutation createEnrolment($classId: ID!) {
-  createEnrolment(input: { classId: $classId }) {
+mutation createEnrolment($input: CreateEnrolmentInput!) {
+  createEnrolment(input: $input) {
     id
-    isFinished
   }
 }

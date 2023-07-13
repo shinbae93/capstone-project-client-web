@@ -1,0 +1,17 @@
+query getMyAssignments($queryParams: AssignmentQueryParams!) {
+  myAssignments(queryParams: $queryParams) {
+    items {
+      id
+      files
+      feedback
+      submittedAt
+      quiz {
+        title
+        content
+        files
+        startTime
+        endTime
+      }
+    }
+  }
+}

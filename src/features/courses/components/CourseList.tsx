@@ -3,14 +3,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { DEFAULT_LIMIT_ITEMS } from '../../../common/constants.ts'
 import {
   Course,
-  CourseStatus,
   useCoursesQuery,
   useGradesQuery,
   useSubjectsQuery,
 } from '../../../graphql/generated/graphql.ts'
 import Loading from '../../../shared/components/Loading.tsx'
 import { CourseItem } from './CourseItem.tsx'
-import { useState } from 'react'
 
 interface FilterCourseDto {
   gradeIds: string[]
@@ -23,7 +21,11 @@ interface FilterCourseDto {
 //     direction: 'ASC' | 'DESC',
 //     nulls: 'NULLS FIRST' | 'NULLS LAST',
 //   },
-//   alphabetical: {},
+//   alphabetical: {
+//     field: 'publishedAt',
+//     direction: 'ASC' | 'DESC',
+//     nulls: 'NULLS FIRST' | 'NULLS LAST',
+//   },
 // }
 
 const CourseList = () => {
@@ -32,8 +34,26 @@ const CourseList = () => {
   const [searchParams] = useSearchParams()
   const q = searchParams.get('q')
 
-  const { data: gradesQueryResult, loading: loadingGrades } = useGradesQuery()
-  const { data: subjectsQueryResult, loading: loadingSubjects } = useSubjectsQuery()
+  const { data: gradesQueryResult, loading: loadingGrades } = useGradesQuery({
+    variables: {
+      queryParams: {
+        pagination: {
+          limit: 99,
+          page: 1,
+        },
+      },
+    },
+  })
+  const { data: subjectsQueryResult, loading: loadingSubjects } = useSubjectsQuery({
+    variables: {
+      queryParams: {
+        pagination: {
+          limit: 99,
+          page: 1,
+        },
+      },
+    },
+  })
 
   const grades = gradesQueryResult?.grades
   const subjects = subjectsQueryResult?.subjects
@@ -43,6 +63,7 @@ const CourseList = () => {
     loading: loadingCourses,
     refetch,
   } = useCoursesQuery({
+    fetchPolicy: 'network-only',
     variables: {
       queryParams: {
         filters: {
@@ -160,7 +181,7 @@ const CourseList = () => {
               <Checkbox.Group className="w-full">
                 <Divider className="my-2" />
                 <Col>
-                  {subjects?.map((subject, index) => (
+                  {subjects?.items?.map((subject, index) => (
                     <Row className="py-1" key={index}>
                       <Checkbox value={subject.id}>
                         <p>{subject.name}</p>
@@ -176,7 +197,7 @@ const CourseList = () => {
               <Checkbox.Group className="w-full">
                 <Divider className="my-2" />
                 <Col>
-                  {grades?.map((grade, index) => (
+                  {grades?.items?.map((grade, index) => (
                     <Row className="py-1" key={index}>
                       <Checkbox value={grade.id}>
                         <p>{grade.name}</p>

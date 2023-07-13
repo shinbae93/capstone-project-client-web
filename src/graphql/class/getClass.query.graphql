@@ -2,6 +2,9 @@ query getClass($id: ID!) {
   getClass(id: $id) {
     id
     name
+    fee
+    startDate
+    endDate
     method
     schedule {
       dayOfWeek

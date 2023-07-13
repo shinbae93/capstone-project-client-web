@@ -13,21 +13,27 @@ query courses($queryParams: CourseQueryParams!) {
       thumbnail
       description
       objectives
-      fee
       isPublished
       status
-      startDate
-      endDate
-      duration
       userId
       user {
         id
         avatar
         fullName
         email
+        tutorDetail {
+          rating
+          totalReviews
+        }
       }
       classes {
+        name
+        address
+        fee
         occupiedSlots
+        totalSlots
+        startDate
+        endDate
       }
       gradeId
       subjectId

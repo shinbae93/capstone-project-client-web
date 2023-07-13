@@ -1,0 +1,10 @@
+query isPayForCourse($courseId: ID!) {
+  myEnrolmentByCourse(courseId: $courseId) {
+    id
+    status
+    classId
+    paymentId
+    startTime
+    endTime
+  }
+}

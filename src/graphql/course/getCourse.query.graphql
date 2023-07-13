@@ -5,19 +5,16 @@ query course($id: ID!) {
     thumbnail
     description
     objectives
-    fee
     isPublished
     status
-    paymentDate
-    startDate
-    endDate
-    duration
     userId
     user {
       id
       avatar
       fullName
       tutorDetail {
+        rating
+        totalReviews
         headline
         biography
       }
@@ -35,6 +32,10 @@ query course($id: ID!) {
     classes {
       id
       name
+      fee
+      address
+      startDate
+      endDate
       method
       schedule {
         dayOfWeek

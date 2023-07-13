@@ -2,6 +2,7 @@ import {
   AuditOutlined,
   BookOutlined,
   CalendarOutlined,
+  DollarOutlined,
   KeyOutlined,
   UserOutlined,
 } from '@ant-design/icons'
@@ -39,7 +40,7 @@ const ProfileLayout = () => {
                 }}
                 className="rounded-none profile-menu-item m-0"
               >
-                <p className="inline-block font-light">My calendar</p>
+                <p className="inline-block font-normal">My calendar</p>
               </Menu.Item>
               {currentUser?.roleId === RoleId.TUTOR && (
                 <Menu.Item
@@ -50,18 +51,28 @@ const ProfileLayout = () => {
                   }}
                   className="rounded-none profile-menu-item m-0"
                 >
-                  <p className="inline-block font-light">My courses</p>
+                  <p className="inline-block font-normal">My courses</p>
                 </Menu.Item>
               )}
               <Menu.Item
-                key="my-learning"
+                key="my-enrolments"
                 icon={<BookOutlined className="text-primary mr-1 text-base" />}
                 onClick={() => {
-                  navigate('/profile/my-learning')
+                  navigate('/profile/my-enrolments')
                 }}
                 className="rounded-none profile-menu-item m-0"
               >
-                <p className="inline-block font-light">My learning</p>
+                <p className="inline-block font-normal">My enrolments</p>
+              </Menu.Item>
+              <Menu.Item
+                key="my-payments"
+                icon={<DollarOutlined className="text-primary mr-1 text-base" />}
+                onClick={() => {
+                  navigate('/profile/my-payments')
+                }}
+                className="rounded-none profile-menu-item m-0"
+              >
+                <p className="inline-block font-normal">My payments</p>
               </Menu.Item>
               <Menu.Item
                 key="general"
@@ -71,7 +82,7 @@ const ProfileLayout = () => {
                 }}
                 className="rounded-none profile-menu-item m-0"
               >
-                <p className="inline-block font-light">General</p>
+                <p className="inline-block font-normal">General</p>
               </Menu.Item>
               <Menu.Item
                 key="change-password"
@@ -81,7 +92,7 @@ const ProfileLayout = () => {
                 }}
                 className="rounded-none profile-menu-item m-0"
               >
-                <p className="inline-block font-light">Change password</p>
+                <p className="inline-block font-normal">Change password</p>
               </Menu.Item>
             </Menu>
           </Sider>

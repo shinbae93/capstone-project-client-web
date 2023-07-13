@@ -1,0 +1,24 @@
+query getTutorReviews($queryParams: TutorReviewQueryParams!) {
+  tutorReviews(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      comment
+      rating
+      authorId
+      author {
+        id
+        fullName
+        avatar
+      }
+      createdAt
+      updatedAt
+    }
+  }
+}

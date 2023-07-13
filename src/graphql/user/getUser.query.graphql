@@ -1,0 +1,14 @@
+query getUser($id: ID!) {
+  getUser(id: $id) {
+    id
+    avatar
+    fullName
+    email
+    tutorDetail {
+      headline
+      biography
+      rating
+      totalReviews
+    }
+  }
+}

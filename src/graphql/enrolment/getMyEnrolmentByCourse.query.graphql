@@ -1,0 +1,32 @@
+query getMyEnrolmentByCourse($courseId: ID!) {
+  myEnrolmentByCourse(courseId: $courseId) {
+    id
+    class {
+      id
+      name
+      address
+      method
+      fee
+      startDate
+      endDate
+      schedule {
+        dayOfWeek
+        startTime
+        endTime
+      }
+    }
+    course {
+      id
+      name
+      thumbnail
+      description
+      status
+      user {
+        id
+        fullName
+        avatar
+      }
+    }
+    paymentId
+  }
+}

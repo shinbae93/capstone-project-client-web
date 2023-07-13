@@ -1,42 +1,5 @@
 mutation createCourse($input: CreateCourseInput!) {
   createCourse(input: $input) {
     id
-    name
-    thumbnail
-    description
-    objectives
-    fee
-    isPublished
-    status
-    startDate
-    endDate
-    duration
-    userId
-    user {
-      id
-      avatar
-      fullName
-      tutorDetail {
-        headline
-        biography
-      }
-    }
-    gradeId
-    grade {
-      id
-      name
-    }
-    subjectId
-    subject {
-      id
-      name
-    }
-    classes {
-      id
-      name
-      occupiedSlots
-    }
-    createdAt
-    updatedAt
   }
 }

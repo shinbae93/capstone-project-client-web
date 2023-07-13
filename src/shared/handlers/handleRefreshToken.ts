@@ -1,10 +1,10 @@
 import { fromPromise, Observable } from '@apollo/client'
 import { ErrorResponse } from '@apollo/client/link/error'
-import { LogoutDocument, RefreshTokenDocument } from '../../graphql/generated/graphql'
-import { clearRefreshToken, clearToken, getRefreshToken, setToken } from '../../utils/token'
-import { client } from '../../config/apollo-client'
-import { setRequestHeaders } from '../../utils/auth'
 import { notification } from 'antd'
+import { client } from '../../config/apollo-client'
+import { RefreshTokenDocument } from '../../graphql/generated/graphql'
+import { setRequestHeaders } from '../../utils/auth'
+import { clearRefreshToken, clearToken, getRefreshToken, setToken } from '../../utils/token'
 
 type CallbackFunction = (value?: unknown) => void
 
@@ -52,14 +52,6 @@ export const handleRefreshToken = ({ forward, operation }: ErrorResponse) => {
             clearRefreshToken()
             notification.error({
               message: 'Your session is expired.',
-            })
-            client.mutate({
-              mutation: LogoutDocument,
-              variables: {
-                input: {
-                  refreshToken,
-                },
-              },
             })
           })
       ).flatMap(() => {

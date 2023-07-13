@@ -12,5 +12,8 @@ query getMyCalendar($queryParams: CalendarQueryParams) {
     courseId
     classId
     tutorId
+    class {
+      address
+    }
   }
 }

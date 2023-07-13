@@ -1,0 +1,5 @@
+mutation createTutorReport($input: CreateTutorReportInput!) {
+  createTutorReport(input: $input) {
+    id
+  }
+}

@@ -1,0 +1,33 @@
+query getPayments($queryParams: PaymentQueryParams!) {
+  payments(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      amount
+      type
+      note
+      user {
+        fullName
+      }
+      class {
+        name
+        startDate
+        endDate
+      }
+      course {
+        name
+      }
+      enrolment {
+        startTime
+        endTime
+      }
+      createdAt
+    }
+  }
+}

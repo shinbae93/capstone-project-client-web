@@ -29,7 +29,6 @@ import {
   useRemoveCourseMutation,
 } from '../graphql/generated/graphql'
 import Loading from '../shared/components/Loading'
-import { CurrencyFormatter } from '../utils/format'
 import { toastCreateSuccess, toastRemoveSuccess, toastUpdateSuccess } from '../utils/toast'
 import { DeepPartial } from '../utils/type'
 
@@ -38,9 +37,7 @@ export interface MyCoursesItemDataType {
   thumbnail: string
   name: string
   status: string
-  fee: number
-  startDate: string
-  endDate: string
+  duration: string[]
   totalStudents: number
   isPublished: boolean
 }
@@ -53,9 +50,13 @@ const convertMyCoursesItems = (courses: Course[]) => {
     name: item.name,
     thumbnail: item.thumbnail || DEFAULT_IMG,
     status: item.status,
-    fee: item.fee,
-    startDate: item.startDate,
-    endDate: item.endDate,
+    duration:
+      item.classes?.map(
+        (item) =>
+          `${item.name}: ${dayjs(item.startDate).format('DD/MM/YYYY')} - ${dayjs(
+            item.endDate
+          ).format('DD/MM/YYYY')}`
+      ) || [],
     totalStudents:
       item.classes?.reduce<number>((acc, cur) => {
         acc += cur.occupiedSlots
@@ -217,25 +218,30 @@ const MyCourses = () => {
   const columns: ColumnsType<MyCoursesItemDataType> = [
     {
       dataIndex: 'thumbnail',
-      width: '10%',
+      width: '7%',
       render: (value: string, record) => (
         <Link to={`/courses/${record.key}/manage`}>
-          <img src={value} alt="course-thumbnail" className="w-14 h-14" />
+          <img src={value} alt="course-thumbnail" className="w-14 h-14 object-scale-down" />
         </Link>
       ),
     },
     {
       title: 'Name',
       dataIndex: 'name',
-      width: '30%',
+      width: '35%',
       sorter: (a, b) => a.name.length - b.name.length,
       sortDirections: ['descend', 'ascend'],
       ...getColumnSearchProps('name'),
-      render: (value: string, record) => <Link to={`/courses/${record.key}/manage`}>{value}</Link>,
+      render: (value: string, record) => (
+        <Link to={`/courses/${record.key}/manage`}>
+          <p className="font-medium">{value}</p>
+        </Link>
+      ),
     },
     {
       title: 'Status',
       dataIndex: 'status',
+      width: '10%',
       sorter: (a, b) => a.status.length - b.status.length,
       sortDirections: ['descend', 'ascend'],
       filters: Object.values(CourseStatus).map((item) => ({
@@ -254,7 +260,7 @@ const MyCourses = () => {
               : 'default'
           }
         >
-          <p>
+          <p className="font-medium">
             {course.isPublished
               ? CourseStatusDisplay[value as keyof typeof CourseStatusDisplay]
               : 'Draft'}
@@ -263,35 +269,29 @@ const MyCourses = () => {
       ),
     },
     {
-      title: 'Fee',
-      dataIndex: 'fee',
-      sorter: (a, b) => a.fee - b.fee,
-      sortDirections: ['descend', 'ascend'],
-      render: (value) => CurrencyFormatter.format(value),
-    },
-    {
-      title: 'Total students',
+      title: 'Students',
       dataIndex: 'totalStudents',
+      width: '10%',
       sorter: (a, b) => a.totalStudents - b.totalStudents,
       sortDirections: ['descend', 'ascend'],
       render: (value) => (
-        <span>
-          <p className="inline-block">{value}</p>
+        <span className="flex flex-row items-center">
+          <p>{value}</p>
           <UserOutlined className="align-middle pl-1" />
         </span>
       ),
     },
     {
-      title: 'Start date',
-      dataIndex: 'startDate',
-      sorter: (a, b) => +dayjs(a.startDate).isBefore(dayjs(b.startDate)),
-      sortDirections: ['descend', 'ascend'],
-    },
-    {
-      title: 'End date',
-      dataIndex: 'endDate',
-      sorter: (a, b) => +dayjs(a.endDate).isBefore(dayjs(b.endDate)),
-      sortDirections: ['descend', 'ascend'],
+      title: 'Duration',
+      dataIndex: 'duration',
+      width: '25%',
+      render: (value: string[]) => (
+        <>
+          {value.map((item) => (
+            <p>{item}</p>
+          ))}
+        </>
+      ),
     },
     {
       fixed: 'right',

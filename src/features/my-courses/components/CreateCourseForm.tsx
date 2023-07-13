@@ -1,14 +1,12 @@
-import { Button, DatePicker, Form, Input, InputNumber, Modal, Select, UploadFile } from 'antd'
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Form, Input, Modal, Select } from 'antd'
 import {
   CreateCourseInput,
   useGradesQuery,
   useSubjectsQuery,
 } from '../../../graphql/generated/graphql'
 import UploadInput from '../../../shared/components/UploadInput'
-import { CalendarOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
-import * as dayjs from 'dayjs'
-import { UploadChangeParam } from 'antd/es/upload'
-import { getDateInput } from '../../../utils/form'
+import { getFile } from '../../../utils/upload'
 
 interface CreateCourseFormProps {
   open: boolean
@@ -16,13 +14,31 @@ interface CreateCourseFormProps {
   onCancel: () => void
 }
 
-const getFile = (e: UploadChangeParam<UploadFile>) => e && e.fileList && e.fileList[0].url
-
 const CreateCourseForm: React.FC<CreateCourseFormProps> = ({ open, onCreate, onCancel }) => {
   const [form] = Form.useForm()
 
-  const { data: gradesQueryResult } = useGradesQuery()
-  const { data: subjectsQueryResult } = useSubjectsQuery()
+  const { data: gradesQueryResult } = useGradesQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      queryParams: {
+        pagination: {
+          limit: 99,
+          page: 1,
+        },
+      },
+    },
+  })
+  const { data: subjectsQueryResult } = useSubjectsQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      queryParams: {
+        pagination: {
+          limit: 99,
+          page: 1,
+        },
+      },
+    },
+  })
 
   return (
     <Modal
@@ -79,7 +95,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({ open, onCreate, onC
           ]}
         >
           <Select className="py-1" placeholder="Select grade...">
-            {gradesQueryResult?.grades?.map((item, index) => (
+            {gradesQueryResult?.grades?.items?.map((item, index) => (
               <Select.Option value={item.id} key={index}>
                 {item.name}
               </Select.Option>
@@ -98,82 +114,14 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({ open, onCreate, onC
           ]}
         >
           <Select className="py-1" placeholder="Select subject...">
-            {subjectsQueryResult?.subjects?.map((item, index) => (
+            {subjectsQueryResult?.subjects?.items?.map((item, index) => (
               <Select.Option value={item.id} key={index}>
                 {item.name}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          messageVariables={{ name: 'Fee' }}
-          name="fee"
-          label="Fee"
-          rules={[
-            {
-              required: true,
-              type: 'number',
-              validator: async (_, fee) => {
-                if (!fee) {
-                  return Promise.reject(new Error('Invalid fee'))
-                }
-              },
-            },
-          ]}
-          className="inline-block w-1/2 pr-2"
-          initialValue={0}
-        >
-          <InputNumber
-            addonBefore="VND"
-            className="w-full"
-            formatter={(value) =>
-              `${value}`.replace(/\./, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }
-            parser={(x) => parseFloat(`${x}`.replace(/,/g, ''))}
-          />
-        </Form.Item>
-        <Form.Item
-          messageVariables={{ name: 'Payment Date' }}
-          name="paymentDate"
-          label="Payment Date"
-          rules={[{ required: true, type: 'number' }]}
-          className="inline-block w-1/2 pl-2"
-        >
-          <InputNumber min={1} addonBefore={<CalendarOutlined />} className="w-full" />
-        </Form.Item>
-        <Form.Item
-          name="startDate"
-          label="Start Date"
-          valuePropName={'date'}
-          className="inline-block w-1/2 pr-2"
-          getValueFromEvent={getDateInput}
-          required
-        >
-          <DatePicker
-            picker="date"
-            className="w-full"
-            disabledDate={(date) => date && date.isBefore(dayjs().subtract(1, 'day'))}
-          />
-        </Form.Item>
-        <Form.Item
-          name="endDate"
-          label="End Date"
-          valuePropName={'date'}
-          className="inline-block w-1/2 pl-2"
-          getValueFromEvent={getDateInput}
-          required
-        >
-          <DatePicker
-            picker="date"
-            className="w-full"
-            disabledDate={(date) =>
-              date &&
-              date.isBefore(
-                dayjs(form.getFieldValue('startDate')).add(1, 'day') || dayjs().subtract(1, 'day')
-              )
-            }
-          />
-        </Form.Item>
+
         <Form.Item
           name="objectives"
           label="Objectives"
@@ -212,7 +160,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({ open, onCreate, onC
                       ]}
                       noStyle
                     >
-                      <Input.TextArea placeholder="Objective" style={{ width: '90%' }} />
+                      <Input.TextArea placeholder="Objective" style={{ width: '95%' }} />
                     </Form.Item>
                     {fields.length > 1 ? (
                       <MinusCircleOutlined
@@ -226,7 +174,7 @@ const CreateCourseForm: React.FC<CreateCourseFormProps> = ({ open, onCreate, onC
                   <Button
                     type="dashed"
                     onClick={() => add()}
-                    style={{ width: '90%' }}
+                    style={{ width: '95%' }}
                     icon={<PlusOutlined className="align-text-bottom" />}
                   >
                     Add objective

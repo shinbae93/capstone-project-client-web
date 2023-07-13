@@ -1,0 +1,6 @@
+query getAssignmentOnly($id: ID!) {
+  assignment(id: $id) {
+    id
+    feedback
+  }
+}

@@ -7,12 +7,13 @@ import { getFileNameFromUrl } from '../../utils/form'
 
 interface UploadInputProps {
   form: FormInstance
+  defaultFileList?: UploadFile[]
 }
 
-const UploadInput: FC<UploadInputProps> = ({ form }) => {
+const UploadInput: FC<UploadInputProps> = ({ form, defaultFileList }) => {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [imageUrl, setImageUrl] = useState<string>()
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileList, setFileList] = useState<UploadFile[]>(defaultFileList || [])
 
   const s3 = new S3({
     accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY,

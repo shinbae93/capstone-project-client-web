@@ -1,0 +1,5 @@
+mutation feedbackAssignment($input: FeedbackAssignmentInput!) {
+  feedbackAssignment(input: $input) {
+    id
+  }
+}

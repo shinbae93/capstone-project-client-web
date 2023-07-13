@@ -1,0 +1,5 @@
+mutation updateQuiz($input: UpdateQuizInput!) {
+  updateQuiz(input: $input) {
+    id
+  }
+}

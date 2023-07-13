@@ -9,15 +9,12 @@ query getMyEnrolments($queryParams: EnrolmentQueryParams) {
     }
     items {
       id
-      isFinished
+      status
       course {
         id
         name
         status
         thumbnail
-        fee
-        startDate
-        endDate
         user {
           id
           avatar
@@ -28,6 +25,15 @@ query getMyEnrolments($queryParams: EnrolmentQueryParams) {
           birthday
         }
       }
+      class {
+        id
+        name
+        fee
+        startDate
+        endDate
+      }
+      paymentId
+      overduePaymentAt
     }
   }
 }

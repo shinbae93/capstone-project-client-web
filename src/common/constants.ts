@@ -25,12 +25,6 @@ export enum DayOfWeek {
   'Saturday',
 }
 
-export const CourseStatusDisplay = {
-  ENDED: 'Finished',
-  IN_PROGRESS: 'In Progress',
-  UP_COMING: 'Not Started',
-}
-
 export const RoleId = {
   ADMIN: 'b9961f54-9748-424d-9453-7dbeec05e212',
   TUTOR: '33358dbf-7697-4324-bccd-334a3691b84b',
@@ -41,4 +35,27 @@ export const GenderDisplay = {
   0: 'Male',
   1: 'Female',
   2: 'Other',
+}
+
+export const EnrolmentStatusDisplay = {
+  PENDING_PAYMENT: 'Pending payment',
+  UP_COMING: 'Up coming',
+  IN_PROGRESS: 'In progress',
+  ENDED: 'Ended',
+  OVERDUE_PAYMENT: 'Overdue payment',
+}
+
+export const EnrolmentStatusColors = {
+  ENDED: '#F15A59',
+  IN_PROGRESS: '#87d068',
+  OVERDUE_PAYMENT: '#FE0000',
+  PENDING_PAYMENT: '#A8A196',
+  UP_COMING: '#2db7f5',
+}
+
+export const CourseStatusDisplay = {
+  DRAFT: 'Draft',
+  UP_COMING: 'Up coming',
+  IN_PROGRESS: 'In progress',
+  ENDED: 'Ended',
 }

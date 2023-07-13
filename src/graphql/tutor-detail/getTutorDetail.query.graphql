@@ -1,0 +1,14 @@
+query tutorDetail($id: ID!) {
+  tutorDetail(id: $id) {
+    id
+    headline
+    biography
+    cv
+    userId
+    user {
+      id
+      fullName
+      avatar
+    }
+  }
+}

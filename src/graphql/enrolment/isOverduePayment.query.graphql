@@ -1,0 +1,8 @@
+query isOverduePayment($id: ID!) {
+  enrolment(id: $id) {
+    id
+    status
+    classId
+    paymentId
+  }
+}

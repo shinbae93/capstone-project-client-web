@@ -1,0 +1,5 @@
+mutation charge($input: ChargeInput!) {
+  charge(input: $input) {
+    id
+  }
+}

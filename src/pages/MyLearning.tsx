@@ -3,8 +3,8 @@ import { useState } from 'react'
 import { DEFAULT_LIMIT_ITEMS } from '../common/constants'
 import MyLearningList from '../features/my-learning/components/MyLearningList'
 import {
-  CourseStatus,
   Enrolment,
+  EnrolmentStatus,
   PaginationMeta,
   useGetMyEnrolmentsQuery,
 } from '../graphql/generated/graphql'
@@ -12,17 +12,20 @@ import Loading from '../shared/components/Loading'
 import { convertEnrolmentsToLearningItems } from '../utils/course-table'
 
 const StatusTab = {
-  all: [CourseStatus.UpComing, CourseStatus.InProgress, CourseStatus.Ended],
-  notstarted: [CourseStatus.UpComing],
-  inprogress: [CourseStatus.InProgress],
-  ended: [CourseStatus.Ended],
+  all: Object.values(EnrolmentStatus),
+  pendingpayment: [EnrolmentStatus.PendingPayment],
+  overduepayment: [EnrolmentStatus.OverduePayment],
+  notstarted: [EnrolmentStatus.UpComing],
+  inprogress: [EnrolmentStatus.InProgress],
+  ended: [EnrolmentStatus.Ended],
 }
 
 const MyLearning = () => {
-  const [statuses, setStatuses] = useState<CourseStatus[]>(Object.values(CourseStatus))
+  const [status, setStatus] = useState<keyof typeof StatusTab>('all')
   const [page, setPage] = useState(1)
 
-  const { data, loading } = useGetMyEnrolmentsQuery({
+  const { data, loading, refetch } = useGetMyEnrolmentsQuery({
+    fetchPolicy: 'network-only',
     variables: {
       queryParams: {
         pagination: {
@@ -30,7 +33,7 @@ const MyLearning = () => {
           limit: DEFAULT_LIMIT_ITEMS,
         },
         filters: {
-          statuses,
+          statuses: StatusTab[status],
         },
       },
     },
@@ -42,13 +45,14 @@ const MyLearning = () => {
     <div>
       <Tabs
         onChange={(tab) => {
-          setStatuses(StatusTab[tab as keyof typeof StatusTab])
+          setStatus(tab as keyof typeof StatusTab)
         }}
+        activeKey={status}
         type="card"
         items={[
           {
             key: 'all',
-            label: <p className="font-normal">All</p>,
+            label: <p className="font-medium">All</p>,
             children: (
               <MyLearningList
                 data={convertEnrolmentsToLearningItems(
@@ -56,12 +60,41 @@ const MyLearning = () => {
                 )}
                 pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
+                refetch={refetch}
+              />
+            ),
+          },
+          {
+            key: 'pendingpayment',
+            label: <p className="font-medium">Pending payment</p>,
+            children: (
+              <MyLearningList
+                data={convertEnrolmentsToLearningItems(
+                  (data?.myEnrolments?.items as Enrolment[]) || []
+                )}
+                pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
+                setPage={setPage}
+                refetch={refetch}
+              />
+            ),
+          },
+          {
+            key: 'overduepayment',
+            label: <p className="font-medium">Overdue payment</p>,
+            children: (
+              <MyLearningList
+                data={convertEnrolmentsToLearningItems(
+                  (data?.myEnrolments?.items as Enrolment[]) || []
+                )}
+                pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
+                setPage={setPage}
+                refetch={refetch}
               />
             ),
           },
           {
             key: 'notstarted',
-            label: <p className="font-normal">Not started</p>,
+            label: <p className="font-medium">Not started</p>,
             children: (
               <MyLearningList
                 data={convertEnrolmentsToLearningItems(
@@ -69,12 +102,13 @@ const MyLearning = () => {
                 )}
                 pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
+                refetch={refetch}
               />
             ),
           },
           {
             key: 'inprogress',
-            label: <p className="font-normal">In progress</p>,
+            label: <p className="font-medium">In progress</p>,
             children: (
               <MyLearningList
                 data={convertEnrolmentsToLearningItems(
@@ -82,12 +116,13 @@ const MyLearning = () => {
                 )}
                 pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
+                refetch={refetch}
               />
             ),
           },
           {
             key: 'ended',
-            label: <p className="font-normal">Finished</p>,
+            label: <p className="font-medium">Finished</p>,
             children: (
               <MyLearningList
                 data={convertEnrolmentsToLearningItems(
@@ -95,6 +130,7 @@ const MyLearning = () => {
                 )}
                 pagination={(data?.myEnrolments.meta as PaginationMeta) || {}}
                 setPage={setPage}
+                refetch={refetch}
               />
             ),
           },

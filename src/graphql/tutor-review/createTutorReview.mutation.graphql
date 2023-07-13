@@ -1,0 +1,5 @@
+mutation createTutorReview($input: CreateTutorReviewInput!) {
+  createTutorReview(input: $input) {
+    id
+  }
+}

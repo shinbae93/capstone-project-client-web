@@ -18,13 +18,15 @@ import MyCourses from './pages/MyCourses'
 import MyLearning from './pages/MyLearning'
 import MyLearningDetail from './pages/MyLearningDetail'
 import Register from './pages/Register'
+import TutorDetail from './pages/TutorDetail'
 import PrivateRoute from './shared/routers/PrivateRoute'
+import TutorList from './pages/TutorList'
+import MyPayments from './pages/MyPayments'
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/auth" element={<AuthLayout />}>
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
@@ -36,15 +38,19 @@ function App() {
             </PrivateRoute>
           }
         >
+          <Route path="/" element={<Home />} />
           <Route path="become-teacher" element={<BecomeTeacher />} />
           <Route path="courses" element={<Courses />} />
-          <Route path="courses/:id" element={<CourseDetail />} />
-          <Route path="courses/:id/learning" element={<MyLearningDetail />} />
-          <Route path="courses/:id/manage" element={<MyCourseDetail />} />
+          <Route path="courses/:courseId" element={<CourseDetail />} />
+          <Route path="courses/:courseId/learning" element={<MyLearningDetail />} />
+          <Route path="courses/:courseId/manage" element={<MyCourseDetail />} />
+          <Route path="tutors" element={<TutorList />} />
+          <Route path="tutors/:tutorId" element={<TutorDetail />} />
           <Route path="profile" element={<ProfileLayout />}>
             <Route path="my-calendar" element={<MyCalendar />} />
-            <Route path="my-learning" element={<MyLearning />} />
+            <Route path="my-enrolments" element={<MyLearning />} />
             <Route path="my-courses" element={<MyCourses />} />
+            <Route path="my-payments" element={<MyPayments />} />
             <Route path="general" element={<GeneralProfile />} />
             <Route path="change-password" element={<ChangePassword />} />
           </Route>

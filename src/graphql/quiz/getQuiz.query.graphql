@@ -1,0 +1,12 @@
+query getQuiz($id: ID!) {
+  quiz(id: $id) {
+    id
+    title
+    content
+    classId
+    courseId
+    files
+    startTime
+    endTime
+  }
+}

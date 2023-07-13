@@ -7,7 +7,12 @@ const Login = () => {
 
   return (
     <>
-      <h1 className="text-2xl font-semibold mb-8">Login with your Edusm account</h1>
+      <Row align="middle" justify="start">
+        <img src="../logo-black-text.svg" alt="Logo" className="w-36" />
+      </Row>
+      <Row align="middle" justify="start">
+        <h1 className="text-2xl font-semibold mb-8">Login with your Edusm account</h1>
+      </Row>
       <Form layout="vertical" onFinish={handleLogin} scrollToFirstError>
         <Row align="middle" justify="center">
           <Col span={24}>
@@ -22,7 +27,7 @@ const Login = () => {
               ]}
             >
               <div>
-                <p>Email</p>
+                <p className="font-semibold">Email</p>
                 <Input className="rounded-lg pr-[1.875rem] mt-1" placeholder="Enter your email" />
               </div>
             </Form.Item>
@@ -38,7 +43,7 @@ const Login = () => {
               ]}
             >
               <div>
-                <p>Password</p>
+                <p className="font-semibold">Password</p>
                 <Input.Password className="rounded-lg mt-1" placeholder="Enter your password" />
               </div>
             </Form.Item>
@@ -68,7 +73,7 @@ const Login = () => {
             <div className="text-center mt-4 text-sm">
               <p className="inline-block pr-3">Don't have an account?</p>
               <Link to="/register">
-                <p className="font-semibold inline-block text-blue-500">Sign up</p>
+                <p className="font-semibold inline-block text-primary">Sign up</p>
               </Link>
             </div>
           </Col>

@@ -1,7 +1,6 @@
-import { CalendarOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
-import { Button, DatePicker, Form, Input, InputNumber, Modal, Select, UploadFile } from 'antd'
-import { UploadChangeParam } from 'antd/es/upload'
-import * as dayjs from 'dayjs'
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { Button, Form, Input, Modal, Select } from 'antd'
+import { useEffect } from 'react'
 import {
   Course,
   useGradesQuery,
@@ -10,7 +9,7 @@ import {
 } from '../../../graphql/generated/graphql'
 import UploadInput from '../../../shared/components/UploadInput'
 import { DeepPartial } from '../../../utils/type'
-import { useEffect } from 'react'
+import { convertUrlToFiles } from '../../../utils/upload'
 
 interface CreateCourseFormProps {
   course: DeepPartial<Course> | undefined
@@ -18,15 +17,31 @@ interface CreateCourseFormProps {
   onCancel: () => void
 }
 
-const getDateInput = (e: dayjs.Dayjs) => e.toDate()
-
-const getFile = (e: UploadChangeParam<UploadFile>) => e && e.fileList && e.fileList[0].url
-
 const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({ course, onUpdate, onCancel }) => {
   const [form] = Form.useForm()
 
-  const { data: gradesQueryResult } = useGradesQuery()
-  const { data: subjectsQueryResult } = useSubjectsQuery()
+  const { data: gradesQueryResult } = useGradesQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      queryParams: {
+        pagination: {
+          limit: 99,
+          page: 1,
+        },
+      },
+    },
+  })
+  const { data: subjectsQueryResult } = useSubjectsQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      queryParams: {
+        pagination: {
+          limit: 99,
+          page: 1,
+        },
+      },
+    },
+  })
   const [updateCourse] = useUpdateCourseMutation()
 
   useEffect(() => {
@@ -70,10 +85,9 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({ course, onUpdate, o
           name="thumbnail"
           label="Thumbnail"
           initialValue={course?.thumbnail}
-          getValueFromEvent={getFile}
           className="text-center"
         >
-          <UploadInput form={form} />
+          <UploadInput form={form} defaultFileList={convertUrlToFiles([course?.thumbnail || ''])} />
         </Form.Item>
         <Form.Item
           name="name"
@@ -104,7 +118,7 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({ course, onUpdate, o
           ]}
         >
           <Select className="py-1" placeholder="Select grade...">
-            {gradesQueryResult?.grades?.map((item, index) => (
+            {gradesQueryResult?.grades?.items?.map((item, index) => (
               <Select.Option value={item.id} key={index}>
                 {item.name}
               </Select.Option>
@@ -125,90 +139,12 @@ const UpdateCourseForm: React.FC<CreateCourseFormProps> = ({ course, onUpdate, o
           ]}
         >
           <Select className="py-1" placeholder="Select subject...">
-            {subjectsQueryResult?.subjects?.map((item, index) => (
+            {subjectsQueryResult?.subjects?.items?.map((item, index) => (
               <Select.Option value={item.id} key={index}>
                 {item.name}
               </Select.Option>
             ))}
           </Select>
-        </Form.Item>
-
-        <Form.Item
-          messageVariables={{ name: 'Fee' }}
-          name="fee"
-          label="Fee"
-          rules={[
-            {
-              required: true,
-              type: 'number',
-              validator: async (_, fee) => {
-                if (!fee) {
-                  return Promise.reject(new Error('Invalid fee'))
-                }
-              },
-            },
-          ]}
-          className="inline-block w-1/2 pr-2"
-          initialValue={course?.fee}
-        >
-          <InputNumber
-            addonBefore="VND"
-            className="w-full"
-            formatter={(value) =>
-              `${value}`.replace(/\./, ',').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            }
-            parser={(x) => parseFloat(`${x}`.replace(/,/g, ''))}
-          />
-        </Form.Item>
-
-        <Form.Item
-          messageVariables={{ name: 'Payment Date' }}
-          name="paymentDate"
-          label="Payment Date"
-          initialValue={course?.paymentDate}
-          rules={[{ required: true, type: 'number' }]}
-          className="inline-block w-1/2 pl-2"
-        >
-          <InputNumber min={1} addonBefore={<CalendarOutlined />} className="w-full" />
-        </Form.Item>
-
-        <Form.Item
-          name="startDate"
-          label="Start Date"
-          valuePropName={'date'}
-          className="inline-block w-1/2 pr-2"
-          getValueFromEvent={getDateInput}
-          initialValue={dayjs(course?.startDate).toDate()}
-          required
-        >
-          <DatePicker
-            picker="date"
-            className="w-full"
-            disabledDate={(date) => date && date.isBefore(dayjs().subtract(1, 'day'))}
-            defaultValue={dayjs(course?.startDate)}
-          />
-        </Form.Item>
-
-        <Form.Item
-          name="endDate"
-          label="End Date"
-          valuePropName={'date'}
-          className="inline-block w-1/2 pl-2"
-          getValueFromEvent={getDateInput}
-          initialValue={dayjs(course?.endDate).toDate()}
-          required
-        >
-          <DatePicker
-            picker="date"
-            className="w-full"
-            disabledDate={(date) =>
-              date &&
-              date.isBefore(
-                dayjs(form.getFieldValue('startDate')).add(1, 'day') || dayjs().subtract(1, 'day')
-              )
-            }
-            defaultValue={dayjs(course?.endDate)}
-          />
         </Form.Item>
 
         <Form.Item

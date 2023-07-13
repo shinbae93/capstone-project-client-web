@@ -1,0 +1,21 @@
+query getQuizzes($queryParams: QuizQueryParams!) {
+  quizzes(queryParams: $queryParams) {
+    meta {
+      itemCount
+      totalItems
+      itemsPerPage
+      totalPages
+      currentPage
+    }
+    items {
+      id
+      title
+      startTime
+      endTime
+      createdAt
+      class {
+        name
+      }
+    }
+  }
+}

@@ -3,23 +3,27 @@ import {
   CalendarOutlined,
   CodeOutlined,
   DeploymentUnitOutlined,
+  DollarOutlined,
   ExperimentOutlined,
   LeftOutlined,
   ReadOutlined,
   RightOutlined,
   RocketOutlined,
+  UserOutlined,
 } from '@ant-design/icons'
-import { Button, Card, Carousel, Input, Space, Tooltip } from 'antd'
+import { Button, Card, Carousel, Input, Rate, Space, Tooltip } from 'antd'
 import { CarouselRef } from 'antd/es/carousel'
+import dayjs from 'dayjs'
+import { maxBy, minBy } from 'lodash'
 import { useContext, useRef } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { DEFAULT_AVATAR, DEFAULT_IMG, RoleId } from '../common/constants'
 import { AuthContext } from '../context/auth.context'
 import { useCoursesQuery } from '../graphql/generated/graphql'
 import { CurrencyFormatter } from '../utils/format'
-import dayjs from 'dayjs'
 
 const Home = () => {
+  const navigate = useNavigate()
   const { currentUser } = useContext(AuthContext)
   const carousel = useRef<CarouselRef>(null)
 
@@ -29,6 +33,9 @@ const Home = () => {
         pagination: {
           limit: 12,
           page: 1,
+        },
+        filters: {
+          isPublished: true,
         },
       },
     },
@@ -102,8 +109,12 @@ const Home = () => {
           className="mx-[-1rem]"
         >
           {data?.courses?.items?.map((item) => (
-            <div className="px-4" key={item.id}>
+            <div className="px-4 py-2" key={item.id}>
               <Card
+                hoverable
+                onClick={() => {
+                  navigate(`/courses/${item.id}`)
+                }}
                 bordered
                 bodyStyle={{
                   padding: '10px',
@@ -112,21 +123,48 @@ const Home = () => {
                   <img
                     alt="thumbnail"
                     src={item.thumbnail || DEFAULT_IMG}
-                    className="h-[220px] object-contain rounded-sm"
+                    className="h-[220px] object-scale-down rounded-sm p-1"
                   />
                 }
                 actions={[
-                  <div className="flex flex-row justify-between px-3">
-                    <Tooltip title="Start date">
-                      <div className="flex flex-row">
-                        <CalendarOutlined key="calendar" className="self-center pr-1" />
-                        <p>{`${dayjs(item.startDate).format('DD/MM/YYYY')}`}</p>
+                  <div className="flex flex-col justify-between px-3">
+                    <Tooltip title="Name">
+                      <div className="flex-1 overflow-hidden whitespace-nowrap inline-block mb-1">
+                        <p className="text-left">{item.name}</p>
                       </div>
                     </Tooltip>
+                    <div className="flex-1 flex flex-row justify-between">
+                      <Tooltip title="Duration">
+                        <div className="flex flex-row">
+                          <CalendarOutlined className="self-center pr-1" />
+                          <p>{`${dayjs(minBy(item.classes, 'startDate')?.startDate).format(
+                            'DD/MM/YYYY'
+                          )} - ${dayjs(maxBy(item.classes, 'endDate')?.endDate).format(
+                            'DD/MM/YYYY'
+                          )}`}</p>
+                        </div>
+                      </Tooltip>
+                      <Tooltip title="Students">
+                        <div className="flex flex-row">
+                          <UserOutlined className="self-center pr-1" />
+                          <p>{`${item.classes?.reduce((acc, cur) => {
+                            acc += cur.occupiedSlots
+                            return acc
+                          }, 0)}`}</p>
+                        </div>
+                      </Tooltip>
+                    </div>
                     <Tooltip title="Fee">
-                      <p className="text-redpink font-semibold">
-                        {CurrencyFormatter.format(item.fee)}
-                      </p>
+                      <div className="flex-1 flex flex-row justify-between">
+                        <div className="flex flex-row">
+                          <DollarOutlined className="self-center pr-1" />
+                          <p>{`${CurrencyFormatter.format(
+                            minBy(item.classes, 'fee')?.fee || 0
+                          )} - ${CurrencyFormatter.format(
+                            minBy(item.classes, 'fee')?.fee || 0
+                          )}`}</p>
+                        </div>
+                      </div>
                     </Tooltip>
                   </div>,
                 ]}
@@ -143,7 +181,15 @@ const Home = () => {
                     <p className="text-base text-center mb-2">
                       {item?.user?.fullName || 'John Doe'}
                     </p>
-                    <p className="text-sm font-medium text-center text-footer">Teacher</p>
+                    <div className="w-full text-center">
+                      <Rate
+                        disabled
+                        allowHalf
+                        defaultValue={item?.user?.tutorDetail?.rating || 0}
+                        className="text-sm"
+                      />
+                      <p className="inline-block ml-3 align-middle">{`(${item?.user?.tutorDetail?.totalReviews})`}</p>
+                    </div>
                   </div>
                 </div>
               </Card>
